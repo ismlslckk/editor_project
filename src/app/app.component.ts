@@ -2,6 +2,12 @@ import { AfterContentInit, Component } from '@angular/core';
 import { CKUploadAdapterPlugin } from './ckupload-adapter';
 import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
 
+declare global {
+  interface Window { CkEditorBilgi: any; }
+}
+
+window.CkEditorBilgi = window.CkEditorBilgi || { disaridanEklenenIcerik: '', guncelIcerik: '' };
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -19,14 +25,13 @@ export class AppComponent implements AfterContentInit {
 
   set icerik(text: string) {
     this._icerik = text;
-    let p = document.querySelector('#guncelIcerikBilgisi')!
-    p.innerHTML = text;
+    window.CkEditorBilgi.guncelIcerik = text;
   }
   ngAfterContentInit(): void {
-    let p = document.querySelector('#disaridanIcerikEkle')!
+    let p = document.querySelector('#disaridanIcerikEklendi')!
     const observerConf = { attributes: true, childList: true, subtree: true };
-    const observer = new MutationObserver((list:any) => {
-      this.icerik=list[0].target.innerHTML;
+    const observer = new MutationObserver((list: any) => {
+      this.icerik = window.CkEditorBilgi.disaridanEklenenIcerik;
     });
     observer.observe(p, observerConf);
 
@@ -40,7 +45,7 @@ export class AppComponent implements AfterContentInit {
     allowedContent: 'iframe[*]'
   };
 
- 
+
 
 
   onReady(editor: any) {
