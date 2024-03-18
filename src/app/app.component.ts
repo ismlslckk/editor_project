@@ -35,6 +35,26 @@ export class AppComponent implements AfterContentInit {
     });
     observer.observe(p, observerConf);
 
+
+    setTimeout(()=>{
+      this.resimDuzenlemeButonuEkle();
+    }, 1000);
+
+  }
+
+   resimDuzenlemeButonuEkle = () => {
+
+    const toolbar = document.querySelector('.ck-toolbar__items')!
+
+    var buttonEl = document.createElement("button");
+    buttonEl.className = "resim-duzenle-button";
+    buttonEl.innerText = "Resim Düzenle";
+    buttonEl.onclick = () => {
+      let ckEditorContent = document.querySelector('.ck-content')! as any;
+      ckEditorContent.style!.display='none';
+
+    }
+    toolbar.appendChild(buttonEl);
   }
 
   public _editor = DecoupledEditor;

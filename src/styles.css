@@ -1,1 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+.resim-duzenle-button{
+    background-color: #04AA6D!important; 
+    border: none!important;
+    color: white!important;
+    padding: 0px 10px!important;
+    text-align: center!important;
+    text-decoration: none!important;
+    display: inline-block!important;
+    font-size: 12px!important;
+    cursor: pointer!important;
+}
