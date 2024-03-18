@@ -36,13 +36,13 @@ export class AppComponent implements AfterContentInit {
     observer.observe(p, observerConf);
 
 
-    setTimeout(()=>{
+    /* setTimeout(()=>{
       this.resimDuzenlemeButonuEkle();
-    }, 1000);
+    }, 1000); */
 
   }
 
-   resimDuzenlemeButonuEkle = () => {
+  /*  resimDuzenlemeButonuEkle = () => {
 
     const toolbar = document.querySelector('.ck-toolbar__items')!
 
@@ -55,7 +55,7 @@ export class AppComponent implements AfterContentInit {
 
     }
     toolbar.appendChild(buttonEl);
-  }
+  } */
 
   public _editor = DecoupledEditor;
   public _editorConfig = {
