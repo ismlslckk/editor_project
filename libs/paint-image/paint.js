@@ -55,7 +55,7 @@ canvas.addEventListener('mouseup', mouseup);
 
 // CREATE CANVAS
 
-function createCanvas(width = 800, height = 800) {
+function createCanvas(width = 800, height = 600) {
     canvas.id = "canvas";
     canvas.width = width;
     canvas.height = height;
@@ -113,9 +113,9 @@ function eraser() {
 
 function resmiEkranaSigdir() {
     const img = document.getElementById("kopyalananResim");
-    img.width = 600;
+    img.width = 800;
     img.height = 600;
-    createCanvas(600, 600);
+    createCanvas(800, 600);
     const canvasEl = document.getElementById("canvas");
     const ctxEl = canvasEl.getContext("2d");
     ctxEl.drawImage(img, 0, 0, img.width, img.height)
