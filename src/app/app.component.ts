@@ -70,7 +70,7 @@ export class AppComponent implements AfterContentInit {
 
   onReady(editor: any) {
     editor.editing.view.change((writer: any) => {
-      writer.setStyle('height', '500px', editor.editing.view.document.getRoot());
+      writer.setStyle('height', '600px', editor.editing.view.document.getRoot());
       writer.setStyle('background', 'white', editor.editing.view.document.getRoot());
       writer.setStyle('border', 'solid 1px', editor.editing.view.document.getRoot());
     });

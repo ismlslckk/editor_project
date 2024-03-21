@@ -1,1 +1,1 @@
-> ng build --configuration production --base-href https://ismlslckk.github.io/editor_project/
+ng build --configuration production --base-href https://ismlslckk.github.io/editor_project/
