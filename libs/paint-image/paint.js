@@ -8,6 +8,9 @@ var linesArray = [];
 currentSize = 5;
 var currentColor = "rgb(200,20,100)";
 var currentBg = "white";
+var tumIslemler = [];
+
+let ilkKezGeriAliniyor = false;
 
 // INITIAL LAUNCH
 
@@ -32,6 +35,7 @@ document.getElementById('controlSize').addEventListener('change', function () {
 
 document.getElementById('eraser').addEventListener('click', eraser);
 document.getElementById('resmiEkranaSigdir').addEventListener('click', resmiEkranaSigdir);
+document.getElementById('geriAl').addEventListener('click', geriAl);
 
 // REDRAW 
 
@@ -121,9 +125,45 @@ function resmiEkranaSigdir() {
     ctxEl.drawImage(img, 0, 0, img.width, img.height)
 }
 
+
+function tumIslemlereEkle() {
+    const canvasEl = document.getElementById("canvas");
+
+    tumIslemler.push(canvasEl.toDataURL());
+}
+
+function geriAl() {
+
+
+    let islem = tumIslemler.pop();
+
+    if (!ilkKezGeriAliniyor) {
+        ilkKezGeriAliniyor = true;
+        islem = tumIslemler.pop();
+    }
+
+    kopyalananResmiCanvasaCiz(islem);
+
+    if (tumIslemler.length == 0) {
+        ilkKezGeriAliniyor = false;
+        initialCanvas();
+
+    }
+}
+
+const removeItem = (arr, item) => {
+    let newArray = [...arr];
+    const index = newArray.findIndex((element) => element === item)
+    if (index !== -1) {
+        newArray.splice(index, 1)
+        fruits = newArray;
+        return newArray
+    }
+
+}
+
 document.onpaste = function (event) {
     var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-    console.log(JSON.stringify(items)); // will give you the mime types
     for (index in items) {
         var item = items[index];
         if (item.kind === 'file') {
@@ -203,6 +243,8 @@ function store(x, y, s, c) {
 function mouseup() {
     isMouseDown = false
     store()
+    tumIslemlereEkle();
+
 }
 
 
@@ -211,5 +253,6 @@ setTimeout(initialCanvas, 250);
 function initialCanvas() {
     createCanvas();
     redraw();
+    tumIslemlereEkle();
 }
 
