@@ -125,7 +125,6 @@ function resmiEkranaSigdir() {
     ctxEl.drawImage(img, 0, 0, img.width, img.height)
 }
 
-
 function tumIslemlereEkle() {
     const canvasEl = document.getElementById("canvas");
 
@@ -134,21 +133,24 @@ function tumIslemlereEkle() {
 
 function geriAl() {
 
+    if (tumIslemler.length === 0)
+        return;
 
-    let islem = tumIslemler.pop();
+    const canvasEl = document.getElementById("canvas");
 
-    if (!ilkKezGeriAliniyor) {
-        ilkKezGeriAliniyor = true;
+    const sonEleman = tumIslemler[tumIslemler.length - 1];
+    const suankiGoruntu = canvasEl.toDataURL();
+
+    let islem;
+    if (JSON.stringify(sonEleman) == JSON.stringify(suankiGoruntu)) {
         islem = tumIslemler.pop();
+        if (!!tumIslemler.length)
+            islem = tumIslemler.pop();
     }
+    else
+        islem = tumIslemler.pop();
 
     kopyalananResmiCanvasaCiz(islem);
-
-    if (tumIslemler.length == 0) {
-        ilkKezGeriAliniyor = false;
-        initialCanvas();
-
-    }
 }
 
 const removeItem = (arr, item) => {
@@ -187,6 +189,8 @@ function kopyalananResmiCanvasaCiz(data) {
 
         ctxEl.drawImage(img, 0, 0, img.width, img.height)
 
+        if (tumIslemler.length == 0)
+            tumIslemlereEkle();
     };
 }
 
