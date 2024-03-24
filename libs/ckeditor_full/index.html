@@ -16,7 +16,7 @@
 
         .ck-editor__editable[role="textbox"] {
             /* editing area */
-            min-height: 600px;
+            min-height: 500px;
         }
 
         .ck-content .image {
@@ -39,6 +39,8 @@
             <script src="https://cdn.ckeditor.com/ckeditor5/35.3.2/super-build/translations/es.js"></script>
         -->
     <script>
+
+        window.CkEditorBilgi = window.CkEditorBilgi || { disaridanEklenenIcerik: '', guncelIcerik: '' };
 
         let editor;
 
@@ -196,27 +198,24 @@
             document.querySelector('[data-cke-tooltip-text="Font Color"]').setAttribute('data-cke-tooltip-text', 'Yazı Rengi');
 
 
-            document.getElementById('setData1').addEventListener('click', setData1);
-        document.getElementById('readData1').addEventListener('click', readData1);
-            
-
+           /*  document.getElementById('guncelIcerigiDoldur').addEventListener('click', guncelIcerigiDoldur);
+            document.getElementById('editoruDoldur').addEventListener('click', editoruDoldur); */
 
         }, 100);
 
-       
+ 
 
-        function setData1(){
-            localStorage.setItem('ismail',editor.getData())
+        function guncelIcerigiDoldur() {
+            window.CkEditorBilgi.guncelIcerik = editor.getData();
         }
 
-        function readData1(){
-            editor.setData(localStorage.getItem('ismail'));
-            localStorage.getItem('ismail')
+        function editoruDoldur() {
+            editor.setData(window.CkEditorBilgi.disaridanEklenenIcerik);
         }
     </script>
 
-    <button id="setData1">Set Data</button>
-    <button id="readData1">Read Data</button>
+   <!--  <button id="guncelIcerigiDoldur">guncelIcerigiDoldur</button>
+    <button id="editoruDoldur">editoruDoldur</button> -->
 
 </body>
 
