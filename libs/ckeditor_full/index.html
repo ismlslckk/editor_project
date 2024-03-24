@@ -14,12 +14,12 @@
         }
 
         .ck-widget {
-      margin-left: 0 !important
-    }
+            margin-left: 0 !important
+        }
 
-    .ck-options-dropdown{
-        display: none!important;
-    }
+        .ck-options-dropdown {
+            display: none !important;
+        }
 
         .ck-editor__editable[role="textbox"] {
             /* editing area */
@@ -52,6 +52,44 @@
 
         window.CkEditorBilgi = window.CkEditorBilgi || { disaridanEklenenIcerik: '', guncelIcerik: '' };
 
+        class MyUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+            upload() {
+                return this.loader.file.then(
+                    (file) => {
+
+                        if (file.size / 1024 > 2048) {
+                            alert('Eklemiş olduğunuz dosya boyutu maksimum sınırı geçmektedir. (Maksimum = 2MB)');
+                            return new Promise((resolve, reject) => {
+                                reject();
+                            });
+                        }
+
+                        return
+                        new Promise((resolve, reject) => {
+                            const toBase64 = (file) =>
+                                new Promise((resolve, reject) => {
+                                    const reader = new FileReader();
+                                    reader.readAsDataURL(file);
+                                    reader.onload = () => resolve(reader.result);
+                                    reader.onerror = (error) => reject(error);
+                                });
+                            const base64_image = toBase64(file).then((data) => {
+                                return resolve({
+                                    default: data
+                                });
+                            });
+                            this.loader.uploaded = true;
+                            return base64_image;
+                        })
+                    }
+                );
+            }
+        }
+
+
         let editor;
 
         // This sample still does not showcase all CKEditor 5 features (!)
@@ -61,7 +99,6 @@
             toolbar: {
                 items: [
                     /* 'exportPDF', 'exportWord', 'selectAll', '|', */
-                    'findAndReplace',  '|',
                     'heading', '|',
                     'bold', 'italic', 'strikethrough', 'underline',
                     /*  'code', 'subscript', 'superscript', 'removeFormat', */
@@ -72,15 +109,16 @@
                     'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
                     'alignment', '|',
                     'link', 'insertImage',
-                     /* 'blockQuote', */
-                      'insertTable', 
-                      /* 'mediaEmbed', 'codeBlock', 'htmlEmbed', */
-                         '|',
+                    /* 'blockQuote', */
+                    'insertTable',
+                    /* 'mediaEmbed', 'codeBlock', 'htmlEmbed', */
+                    '|',
                     /* 'specialCharacters', 'pageBreak', */
-                     'horizontalLine',  '|',
+                    'horizontalLine', '|',
                     /* 'textPartLanguage', '|', */
                     /* 'sourceEditing' */,
-                    
+                    'findAndReplace'
+
                 ],
                 shouldNotGroupWhenFull: true
             },
@@ -187,7 +225,7 @@
                 // Storing images as Base64 is usually a very bad idea.
                 // Replace it on production website with other solutions:
                 // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/image-upload.html
-                // 'Base64UploadAdapter',
+                'Base64UploadAdapter',
                 'RealTimeCollaborativeComments',
                 'RealTimeCollaborativeTrackChanges',
                 'RealTimeCollaborativeRevisionHistory',
@@ -204,12 +242,14 @@
             ]
         }).then(newEditor => {
             editor = newEditor;
+
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new MyUploadAdapter(loader);
+            };
         })
         .catch(error => {
-            console.error(error);
-        });
-
-
+                console.error(error);
+            });
 
         setTimeout(() => {
             turkcelestir('Font Size', 'Yazı Boyutu');
@@ -219,13 +259,13 @@
             turkcelestir('Text alignment', 'Metin Hizalama');
             turkcelestir('Horizontal line', 'Ayraç Ekle');
 
-            document.querySelectorAll('span').forEach(x=>{
-                if(x.innerHTML === 'Find'){
+            document.querySelectorAll('span').forEach(x => {
+                if (x.innerHTML === 'Find') {
                     x.innerHTML = 'Bul';
                 }
             });
 
-          
+
         }, 100);
 
 
