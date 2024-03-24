@@ -13,6 +13,14 @@
             margin: 20px auto;
         }
 
+        .ck-widget {
+      margin-left: 0 !important
+    }
+
+    .ck-options-dropdown{
+        display: none!important;
+    }
+
         .ck-editor__editable[role="textbox"] {
             /* editing area */
             min-height: 575px;
@@ -33,7 +41,7 @@
             The "super-build" of CKEditor 5 served via CDN contains a large set of plugins and multiple editor types.
             See https://ckeditor.com/docs/ckeditor5/latest/installation/getting-started/quick-start.html#running-a-full-featured-editor-from-cdn
         -->
-<!--         <script src="https://cdn.ckeditor.com/ckeditor5/35.3.2/super-build/ckeditor.js"></script>
+    <!--         <script src="https://cdn.ckeditor.com/ckeditor5/35.3.2/super-build/ckeditor.js"></script>
  -->
     <script src="./ckeditor.js"></script>
     <!--
@@ -52,20 +60,27 @@
             // https://ckeditor.com/docs/ckeditor5/latest/features/toolbar/toolbar.html#extended-toolbar-configuration-format
             toolbar: {
                 items: [
-                    'exportPDF', 'exportWord', '|',
-                    'findAndReplace', 'selectAll', '|',
+                    /* 'exportPDF', 'exportWord', 'selectAll', '|', */
+                    'findAndReplace',  '|',
                     'heading', '|',
-                    'bold', 'italic', 'strikethrough', 'underline', 'code', 'subscript', 'superscript', 'removeFormat', '|',
+                    'bold', 'italic', 'strikethrough', 'underline',
+                    /*  'code', 'subscript', 'superscript', 'removeFormat', */
+                    '|',
                     'bulletedList', 'numberedList', 'todoList', '|',
                     'outdent', 'indent', '|',
                     'undo', 'redo',
-                    '-',
                     'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
                     'alignment', '|',
-                    'link', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
-                    'specialCharacters', 'horizontalLine', 'pageBreak', '|',
-                    'textPartLanguage', '|',
-                    'sourceEditing'
+                    'link', 'insertImage',
+                     /* 'blockQuote', */
+                      'insertTable', 
+                      /* 'mediaEmbed', 'codeBlock', 'htmlEmbed', */
+                         '|',
+                    /* 'specialCharacters', 'pageBreak', */
+                     'horizontalLine',  '|',
+                    /* 'textPartLanguage', '|', */
+                    /* 'sourceEditing' */,
+                    
                 ],
                 shouldNotGroupWhenFull: true
             },
@@ -190,22 +205,33 @@
         }).then(newEditor => {
             editor = newEditor;
         })
-            .catch(error => {
-                console.error(error);
-            });
+        .catch(error => {
+            console.error(error);
+        });
+
+
 
         setTimeout(() => {
-            document.querySelector('[data-cke-tooltip-text="Font Size"]').setAttribute('data-cke-tooltip-text', 'Yazı Boyutu');
-            document.querySelector('[data-cke-tooltip-text="Font Family"]').setAttribute('data-cke-tooltip-text', 'Yazı Ailesi');
-            document.querySelector('[data-cke-tooltip-text="Font Color"]').setAttribute('data-cke-tooltip-text', 'Yazı Rengi');
+            turkcelestir('Font Size', 'Yazı Boyutu');
+            turkcelestir('Font Family', 'Yazı Ailesi');
+            turkcelestir('Font Color', 'Yazı Rengi');
+            turkcelestir('Font Background Color', 'Yazı Arkaplan Rengi');
+            turkcelestir('Text alignment', 'Metin Hizalama');
+            turkcelestir('Horizontal line', 'Ayraç Ekle');
 
+            document.querySelectorAll('span').forEach(x=>{
+                if(x.innerHTML === 'Find'){
+                    x.innerHTML = 'Bul';
+                }
+            });
 
-           /*  document.getElementById('guncelIcerigiDoldur').addEventListener('click', guncelIcerigiDoldur);
-            document.getElementById('editoruDoldur').addEventListener('click', editoruDoldur); */
-
+          
         }, 100);
 
- 
+
+        function turkcelestir(eskiTooltipText, yeniTooltipText) {
+            document.querySelector(`[data-cke-tooltip-text*="${eskiTooltipText}"]`).setAttribute('data-cke-tooltip-text', yeniTooltipText);
+        }
 
         function guncelIcerigiDoldur() {
             window.CkEditorBilgi.guncelIcerik = editor.getData();
@@ -216,7 +242,7 @@
         }
     </script>
 
-   <!--  <button id="guncelIcerigiDoldur">guncelIcerigiDoldur</button>
+    <!--  <button id="guncelIcerigiDoldur">guncelIcerigiDoldur</button>
     <button id="editoruDoldur">editoruDoldur</button> -->
 
 </body>
