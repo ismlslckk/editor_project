@@ -257,7 +257,9 @@
             editor = newEditor;
 
             editor.model.document.on('change:data', (evt, data) => {
-                if (editor.getData().indexOf('Version:0.9 StartHTML:') != -1 && (fileUploadLoader?.loader.status === 'idle' || !fileUploadLoader)) {
+                if (editor.getData().indexOf('Version:0.9 StartHTML:') != -1
+                 && (fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)
+                ) {
                     const versionIndexOf = editor.getData().indexOf('Version:0.9 StartHTML:');
                     const blockedIndexOf = editor.getData().indexOf('SourceURL:about:blank#blocked');
                     const newDataa = editor.getData().slice(0, versionIndexOf) + editor.getData().slice(blockedIndexOf + 29);
