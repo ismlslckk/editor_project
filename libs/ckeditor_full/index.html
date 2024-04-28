@@ -18,9 +18,12 @@
 } */
 
 
+        body{
+            margin-top:0;
+        }
 
         #container {
-            margin: 20px auto;
+            margin: 2px 2px 2px 2px;
         }
 
         .ck-widget {
@@ -33,8 +36,8 @@
 
         .ck-editor__editable[role="textbox"] {
             /* editing area */
-            min-height: 655px;
-            max-height: 655px;
+            min-height: calc(91vh);
+            max-height: calc(91vh);
         }
 
         .ck-content .image {
@@ -290,12 +293,11 @@
                 }
             });
 
-
         }, 100);
 
 
         function turkcelestir(eskiTooltipText, yeniTooltipText) {
-            document.querySelector(`[data-cke-tooltip-text*="${eskiTooltipText}"]`).setAttribute('data-cke-tooltip-text', yeniTooltipText);
+            document.querySelector(`[data-cke-tooltip-text*="${eskiTooltipText}"]`)?.setAttribute('data-cke-tooltip-text', yeniTooltipText);
         }
 
         function guncelIcerigiDoldur() {
