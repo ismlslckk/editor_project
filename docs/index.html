@@ -18,8 +18,8 @@
 } */
 
 
-        body{
-            margin-top:0;
+        body {
+            margin-top: 0;
         }
 
         #container {
@@ -108,6 +108,8 @@
 
         let editor;
 
+        const rakamBoyutlari = []
+
         // This sample still does not showcase all CKEditor 5 features (!)
         // Visit https://ckeditor.com/docs/ckeditor5/latest/features/index.html to browse all the features.
         CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
@@ -116,15 +118,16 @@
                 items: [
                     /* 'exportPDF', 'exportWord', 'selectAll', '|', */
                     'heading', '|',
-                    'bold', 'italic', 
+                    'bold', 'italic',
                     /*  'strikethrough', 'underline','code', 'subscript', 'superscript', 'removeFormat', */
                     '|',
                     'bulletedList', 'numberedList', 'todoList', '|',
-                    'outdent', 'indent', '|',
+                    /* 'outdent', 'indent', '|', */
                     'undo', 'redo',
                     'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
-                    'alignment', '|',
-                    'link', 'insertImage',
+                  /*   'alignment', '|', */
+                   /*  'link',  */
+                    'insertImage',
                     /* 'blockQuote', */
                     'insertTable',
                     /* 'mediaEmbed', 'codeBlock', 'htmlEmbed', */
@@ -133,7 +136,7 @@
                     /* 'horizontalLine', '|', */
                     /* 'textPartLanguage', '|', */
                     /* 'sourceEditing' */,
-                    'findAndReplace'
+                   /*  'findAndReplace' */
 
                 ],
                 shouldNotGroupWhenFull: true
@@ -261,7 +264,7 @@
 
             editor.model.document.on('change:data', (evt, data) => {
                 if (editor.getData().indexOf('Version:0.9 StartHTML:') != -1
-                 && (fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)
+                    && (fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)
                 ) {
                     const versionIndexOf = editor.getData().indexOf('Version:0.9 StartHTML:');
                     const blockedIndexOf = editor.getData().indexOf('SourceURL:about:blank#blocked');
@@ -293,6 +296,7 @@
                 }
             });
 
+            ayarlaRakamBoyutlari();
         }, 100);
 
 
@@ -307,6 +311,31 @@
         function editoruDoldur() {
             editor.setData(window.CkEditorBilgi.disaridanEklenenIcerik);
         }
+
+        function rakamSvgAyarla(rakam) {
+
+            const fontSizeIcon = document.querySelector('[data-cke-tooltip-text="Yazı Boyutu"]');
+
+            let img = document.createElement('img');
+            img.src = `./png/${rakam}.png`;
+            img.style.width = '25px';
+            img.style.height = '25px';
+
+            fontSizeIcon.firstElementChild.remove();
+            fontSizeIcon.insertBefore(img, fontSizeIcon.firstChild);
+        }
+
+        function ayarlaRakamBoyutlari() {
+            rakamSvgAyarla('Default');
+
+            const buttons = document.querySelectorAll(".ck-fontsize-option");
+            buttons.forEach(element => {
+                element.addEventListener("click", (event) => {
+                    rakamSvgAyarla(event.srcElement.innerText);
+                });
+            });
+        }
+
     </script>
 
     <!--  <button id="guncelIcerigiDoldur">guncelIcerigiDoldur</button>
