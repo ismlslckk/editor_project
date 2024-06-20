@@ -297,6 +297,7 @@
             });
 
             ayarlaRakamBoyutlari();
+            ayarlaYaziRengiIcon();
         }, 100);
 
 
@@ -334,6 +335,18 @@
                     rakamSvgAyarla(event.srcElement.innerText);
                 });
             });
+        }
+
+        function ayarlaYaziRengiIcon () {
+            const yaziRengiIcon = document.querySelector('[data-cke-tooltip-text="Yazı Rengi"]');
+
+            let img = document.createElement('img');
+            img.src = `./png/font_color_icon.png`;
+            img.style.width = '25px';
+            img.style.height = '25px';
+
+            yaziRengiIcon.firstElementChild.remove();
+            yaziRengiIcon.insertBefore(img, yaziRengiIcon.firstChild);
         }
 
     </script>
