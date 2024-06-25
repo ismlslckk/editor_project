@@ -298,8 +298,15 @@
 
             ayarlaRakamBoyutlari();
             ayarlaYaziRengiIcon();
+            okIkonlariniKaldir();
         }, 100);
 
+        function okIkonlariniKaldir(){
+            const ikonListesi = document.querySelectorAll('.ck-dropdown__arrow');
+            const ikonListesi2 = document.querySelectorAll('.ck-splitbutton__arrow');
+            ikonListesi.forEach(x=>x.remove());
+            ikonListesi2.forEach(x=>x.remove());
+        }
 
         function turkcelestir(eskiTooltipText, yeniTooltipText) {
             document.querySelector(`[data-cke-tooltip-text*="${eskiTooltipText}"]`)?.setAttribute('data-cke-tooltip-text', yeniTooltipText);
