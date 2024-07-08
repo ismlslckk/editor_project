@@ -65,44 +65,67 @@
 
         window.CkEditorBilgi = window.CkEditorBilgi || { disaridanEklenenIcerik: '', guncelIcerik: '' };
 
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+            })
+        };
+
         class MyUploadAdapter {
             constructor(loader) {
                 this.loader = loader;
             }
+
+
+
+
+            resizedataURL(datas, wantedWidth, wantedHeight) {
+                return new Promise(async function (resolve, reject) {
+
+                    // We create an image to receive the Data URI
+                    var img = document.createElement('img');
+
+                    // When the event "onload" is triggered we can resize the image.
+                    img.onload = function () {
+                        // We create a canvas and get its context.
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+
+                        // We set the dimensions at the wanted size.
+                        canvas.width = wantedWidth;
+                        canvas.height = wantedHeight;
+
+                        // We resize the image with the canvas method drawImage();
+                        ctx.drawImage(this, 0, 0, wantedWidth, wantedHeight);
+
+                        var dataURI = canvas.toDataURL();
+
+                        // This is the return of the Promise
+                        resolve(dataURI);
+                    };
+
+                    // We put the Data URI in the image's src attribute
+                    img.src = await toBase64(datas);
+
+                })
+            }
+
             upload() {
                 return this.loader.file.then(
-                    (file) => {
-                        ckEditorFullFilled = false;
-                        if (file.size / 1024 > 2048) {
-                            alert('Eklemiş olduğunuz dosya boyutu maksimum sınırı geçmektedir. (Maksimum = 2MB)');
-                            return new Promise((resolve, reject) => {
-                                reject();
-                            });
-                        }
+                    async (file) => {
+                        let finalImage = await this.resizedataURL(file, 800, 600);
 
                         return new Promise((resolve, reject) => {
-                            const toBase64 = (file) =>
-                                new Promise((resolve, reject) => {
-                                    const reader = new FileReader();
-                                    reader.readAsDataURL(file);
-                                    reader.onload = () => resolve(reader.result);
-                                    reader.onerror = (error) => reject(error);
-                                });
-                            const base64_image = toBase64(file).then((data) => {
-                                ckEditorFullFilled = true;
-                                return resolve({
-                                    default: data
-                                });
-                            });
                             this.loader.uploaded = true;
-                            return base64_image;
+                            return finalImage;
                         })
                     }
                 );
             }
         }
-
-        let ckEditorFullFilled = true;
 
         let fileUploadLoader = null;
 
@@ -125,8 +148,8 @@
                     /* 'outdent', 'indent', '|', */
                     'undo', 'redo',
                     'fontSize', 'fontFamily', 'fontColor', '|',
-                  /*   'fontBackgroundColor','highlight','alignment', '|', */
-                   /*  'link',  */
+                    /*   'fontBackgroundColor','highlight','alignment', '|', */
+                    /*  'link',  */
                     'insertImage',
                     /* 'blockQuote', */
                     'insertTable',
@@ -136,7 +159,7 @@
                     /* 'horizontalLine', '|', */
                     /* 'textPartLanguage', '|', */
                     /* 'sourceEditing' */,
-                   /*  'findAndReplace' */
+                    /*  'findAndReplace' */
 
                 ],
                 shouldNotGroupWhenFull: true
@@ -301,11 +324,11 @@
             okIkonlariniKaldir();
         }, 100);
 
-        function okIkonlariniKaldir(){
+        function okIkonlariniKaldir() {
             const ikonListesi = document.querySelectorAll('.ck-dropdown__arrow');
             const ikonListesi2 = document.querySelectorAll('.ck-splitbutton__arrow');
-            ikonListesi.forEach(x=>x.remove());
-            ikonListesi2.forEach(x=>x.remove());
+            ikonListesi.forEach(x => x.remove());
+            ikonListesi2.forEach(x => x.remove());
         }
 
         function turkcelestir(eskiTooltipText, yeniTooltipText) {
@@ -344,7 +367,7 @@
             });
         }
 
-        function ayarlaYaziRengiIcon () {
+        function ayarlaYaziRengiIcon() {
             const yaziRengiIcon = document.querySelector('[data-cke-tooltip-text="Yazı Rengi"]');
 
             let img = document.createElement('img');
