@@ -46,14 +46,17 @@
             margin: 20px auto;
         }
 
-        p{
-            margin: 0!important;
+        p {
+            margin: 0 !important;
         }
 
-        p:first-child{
-            margin-top: 5px!important;
+        p:first-child {
+            margin-top: 5px !important;
         }
 
+        button[data-cke-tooltip-text="Açıklamayı aç"] {
+            display: none !important;
+        }
     </style>
     <div id="container">
         <div id="editor">
@@ -134,8 +137,8 @@
                     /* 'outdent', 'indent', '|', */
                     'undo', 'redo',
                     'fontSize', 'fontFamily', 'fontColor', '|',
-                  /*   'fontBackgroundColor','highlight','alignment', '|', */
-                   /*  'link',  */
+                    /*   'fontBackgroundColor','highlight','alignment', '|', */
+                    /*  'link',  */
                     'insertImage',
                     /* 'blockQuote', */
                     'insertTable',
@@ -145,7 +148,7 @@
                     /* 'horizontalLine', '|', */
                     /* 'textPartLanguage', '|', */
                     /* 'sourceEditing' */,
-                   /*  'findAndReplace' */
+                    /* 'findAndReplace' */
 
                 ],
                 shouldNotGroupWhenFull: true
@@ -308,13 +311,14 @@
             ayarlaRakamBoyutlari();
             ayarlaYaziRengiIcon();
             okIkonlariniKaldir();
+            //ayarlaFindAndReplace();
         }, 100);
 
-        function okIkonlariniKaldir(){
+        function okIkonlariniKaldir() {
             const ikonListesi = document.querySelectorAll('.ck-dropdown__arrow');
             const ikonListesi2 = document.querySelectorAll('.ck-splitbutton__arrow');
-            ikonListesi.forEach(x=>x.remove());
-            ikonListesi2.forEach(x=>x.remove());
+            ikonListesi.forEach(x => x.remove());
+            ikonListesi2.forEach(x => x.remove());
         }
 
         function turkcelestir(eskiTooltipText, yeniTooltipText) {
@@ -353,7 +357,7 @@
             });
         }
 
-        function ayarlaYaziRengiIcon () {
+        function ayarlaYaziRengiIcon() {
             const yaziRengiIcon = document.querySelector('[data-cke-tooltip-text="Yazı Rengi"]');
 
             let img = document.createElement('img');
@@ -363,6 +367,26 @@
 
             yaziRengiIcon.firstElementChild.remove();
             yaziRengiIcon.insertBefore(img, yaziRengiIcon.firstChild);
+        }
+
+        function ayarlaFindAndReplace() {
+            const findAndReplace = document.querySelector('[data-cke-tooltip-text^="Bul"]').parentElement;
+            findAndReplace.firstElementChild.remove();
+
+            let imgFindAndReplace = document.createElement('img');
+            imgFindAndReplace.src = `./png/find_icon.png`;
+            imgFindAndReplace.style.width = '25px';
+            imgFindAndReplace.style.height = '25px';
+
+            imgFindAndReplace.addEventListener('click', () => {
+                const findAndReplaceForm = document.querySelector('.ck-find-and-replace-form').parentElement;
+                if (findAndReplaceForm.style.display === 'block')
+                    findAndReplaceForm.style.display = '';
+                else
+                    findAndReplaceForm.style.display = 'block';
+            })
+
+            findAndReplace.appendChild(imgFindAndReplace);
         }
 
     </script>
