@@ -296,7 +296,13 @@
 
                 if ((fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)) {
                     const readedData = editor.getData();
-                    if (readedData.indexOf('Version:0.9 StartHTML:') != -1) {
+                    if (readedData.indexOf('iframe') != -1) {
+                        const iframeBasIndexOf = readedData.indexOf('<iframe');
+                        const iframeBitIndexOf = readedData.indexOf('</iframe>');
+                        const newDataa = readedData.slice(0, iframeBasIndexOf) + readedData.slice(iframeBitIndexOf + 9);
+                        editor.setData(newDataa);
+                    }
+                    else if (readedData.indexOf('Version:0.9 StartHTML:') != -1) {
                         const versionIndexOf = readedData.indexOf('Version:0.9 StartHTML:');
                         const blockedIndexOf = readedData.indexOf('SourceURL:about:blank#blocked');
                         const newDataa = readedData.slice(0, versionIndexOf) + readedData.slice(blockedIndexOf + 29);
