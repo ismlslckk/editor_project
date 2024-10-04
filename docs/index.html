@@ -63,14 +63,14 @@
 
         /* tablo açıklama end*/
 
-       
+
 
         /* liste icon boyutları begin*/
 
         button[data-cke-tooltip-text="Simgeli Liste"],
         button[data-cke-tooltip-text="Numaralı Liste"],
         button[data-cke-tooltip-text="Yapılacaklar Listesi"] {
-            font-size: 1.1rem!important;
+            font-size: 1.1rem !important;
         }
 
         /* liste icon boyutları end*/
@@ -293,14 +293,28 @@
             editor = newEditor;
 
             editor.model.document.on('change:data', (evt, data) => {
-                if (editor.getData().indexOf('Version:0.9 StartHTML:') != -1
-                    && (fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)
-                ) {
-                    const versionIndexOf = editor.getData().indexOf('Version:0.9 StartHTML:');
-                    const blockedIndexOf = editor.getData().indexOf('SourceURL:about:blank#blocked');
-                    const newDataa = editor.getData().slice(0, versionIndexOf) + editor.getData().slice(blockedIndexOf + 29);
-                    editor.setData(newDataa);
+
+                if ((fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)) {
+                    const readedData = editor.getData();
+                    if (readedData.indexOf('iframe') != -1) {
+                        const iframeBasIndexOf = readedData.indexOf('<iframe');
+                        const iframeBitIndexOf = readedData.indexOf('</iframe>');
+                        const newDataa = readedData.slice(0, iframeBasIndexOf) + readedData.slice(iframeBitIndexOf + 9);
+                        editor.setData(newDataa);
+                    }
+                    else if (readedData.indexOf('Version:0.9 StartHTML:') != -1) {
+                        const versionIndexOf = readedData.indexOf('Version:0.9 StartHTML:');
+                        const blockedIndexOf = readedData.indexOf('SourceURL:about:blank#blocked');
+                        const newDataa = readedData.slice(0, versionIndexOf) + readedData.slice(blockedIndexOf + 29);
+                        editor.setData(newDataa);
+                    }
+                    else if (readedData.indexOf('"=""') != -1) {
+                        const newDataa = readedData.replaceAll('"=""', '')
+                        editor.setData(newDataa);
+                    }
                 }
+
+
             });
 
             editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
@@ -309,6 +323,7 @@
             };
         })
             .catch(error => {
+                console.error('error occured!...');
                 console.error(error);
             });
 
@@ -406,6 +421,11 @@
 
             findAndReplace.appendChild(imgFindAndReplace);
         }
+
+        window.onerror = function (message, url, lineNumber) {
+            console.log({ message })
+            return true;
+        };
 
     </script>
 
