@@ -74,7 +74,6 @@
         }
 
         /* liste icon boyutları end*/
-
     </style>
     <div id="container">
         <div id="editor">
@@ -133,12 +132,10 @@
         }
 
         let ckEditorFullFilled = true;
-
         let fileUploadLoader = null;
-
         let editor;
-
         const rakamBoyutlari = []
+        let selectedImage = null;
 
         // This sample still does not showcase all CKEditor 5 features (!)
         // Visit https://ckeditor.com/docs/ckeditor5/latest/features/index.html to browse all the features.
@@ -344,6 +341,7 @@
             ayarlaRakamBoyutlari();
             ayarlaYaziRengiIcon();
             okIkonlariniKaldir();
+            secilenResmiAyarla();
             //ayarlaFindAndReplace();
         }, 100);
 
@@ -420,6 +418,25 @@
             })
 
             findAndReplace.appendChild(imgFindAndReplace);
+        }
+
+        function secilenResmiAyarla() {
+            document.addEventListener('click', function (evt) {
+                if (!!evt && !!evt.target && !!evt.target.tagName) {
+                    const selectedTag = evt.target.tagName.toLowerCase();
+                    if (selectedTag == 'img') {
+                        selectedImage = evt.srcElement;
+                    }
+                    else {
+                        electedImage = null;
+                    }
+                }
+            }, false);
+        }
+
+        function guncelleSecilenResim(newImgSrc) {
+            selectedImage.src = newImgSrc;
+            selectedImage = null;
         }
 
         window.onerror = function (message, url, lineNumber) {
