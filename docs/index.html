@@ -427,16 +427,13 @@
                     if (selectedTag == 'img') {
                         selectedImage = evt.srcElement;
                     }
-                    else {
-                        electedImage = null;
-                    }
                 }
             }, false);
         }
 
         function guncelleSecilenResim(newImgSrc) {
-            selectedImage.src = newImgSrc;
-            selectedImage = null;
+            if (!!selectedImage)
+                editor.setData(editor.getData().replaceAll(selectedImage.src, newImgSrc));
         }
 
         window.onerror = function (message, url, lineNumber) {
