@@ -421,7 +421,7 @@
         }
 
         function secilenResmiAyarla() {
-            document.addEventListener('click', function (evt) {
+            document.addEventListener('mousedown', function (evt) {
                 if (!!evt && !!evt.target && !!evt.target.tagName) {
                     const selectedTag = evt.target.tagName.toLowerCase();
                     if (selectedTag == 'img') {
