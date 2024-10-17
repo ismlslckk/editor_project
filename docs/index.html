@@ -436,6 +436,14 @@
                 editor.setData(editor.getData().replaceAll(selectedImage.src, newImgSrc));
         }
 
+        function editoruReadOnlyYap() {
+            document.getElementsByTagName('body')[0].style.pointerEvents='none';
+        }
+
+        function editoruEditableYap() {
+            document.getElementsByTagName('body')[0].style.pointerEvents='';
+        }
+
         window.onerror = function (message, url, lineNumber) {
             console.log({ message })
             return true;
