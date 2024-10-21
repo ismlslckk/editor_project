@@ -432,16 +432,20 @@
         }
 
         function guncelleSecilenResim(newImgSrc) {
-            if (!!selectedImage)
+            if (!!selectedImage) {
                 editor.setData(editor.getData().replaceAll(selectedImage.src, newImgSrc));
+                if(!!selectedImage.srcset){
+                    editor.setData(editor.getData().replaceAll(selectedImage.srcset, newImgSrc));
+                }
+            }
         }
 
         function editoruReadOnlyYap() {
-            document.getElementsByTagName('body')[0].style.pointerEvents='none';
+            document.getElementsByTagName('body')[0].style.pointerEvents = 'none';
         }
 
         function editoruEditableYap() {
-            document.getElementsByTagName('body')[0].style.pointerEvents='';
+            document.getElementsByTagName('body')[0].style.pointerEvents = '';
         }
 
         window.onerror = function (message, url, lineNumber) {
