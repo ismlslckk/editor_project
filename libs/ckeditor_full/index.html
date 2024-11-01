@@ -136,6 +136,7 @@
         let editor;
         const rakamBoyutlari = []
         let selectedImage = null;
+        let sifresiCozulecekSmallElement = null;
 
         // This sample still does not showcase all CKEditor 5 features (!)
         // Visit https://ckeditor.com/docs/ckeditor5/latest/features/index.html to browse all the features.
@@ -342,8 +343,127 @@
             ayarlaYaziRengiIcon();
             okIkonlariniKaldir();
             secilenResmiAyarla();
+            //secilenMetniSifrelemeButonEkle();
             //ayarlaFindAndReplace();
         }, 100);
+
+        function generateRandomString(length) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                result += characters[randomIndex];
+            }
+            return result;
+        }
+
+        function secilenMetniCozmeAyarla() {
+            document.addEventListener('mousedown', function (evt) {
+                if (!!evt && !!evt.target && !!evt.target.tagName) {
+                    const selectedTag = evt.target.tagName.toLowerCase();
+                    if (selectedTag == 'small') {
+                        if (evt.target.className.includes('sifrelenmisEleman')) {
+                            sifresiCozulecekSmallElement = evt.srcElement;
+                        }
+                        else {
+                            sifresiCozulecekSmallElement = null;
+                        }
+                    }
+                }
+            }, false);
+        }
+
+        function createSmallElementWithAsteriks(pureValue) {
+
+            let asteriksStr = '';
+            for (let i = 0; i < pureValue.length; i++) {
+                asteriksStr = asteriksStr + '✱';
+            }
+
+            const smallElement = document.createElement("small");
+            smallElement.className = `sifrelenmisEleman${generateRandomString(24)}`;
+            smallElement.innerText = asteriksStr;;
+            smallElement.setAttribute('data-pureValue', pureValue.split('').join('_#_'));
+            smallElement.style.backgroundColor = '#f4f4f4'; // Light gray background
+            smallElement.style.color = '#d63384'; // Custom text color
+            smallElement.style.border = '1px solid #ccc'; // Border
+            smallElement.style.borderRadius = '3px'; // Rounded corners
+            smallElement.style.padding = '2px';
+            smallElement.style.fontSize = '13px'; // Margin
+
+            return smallElement.outerHTML;
+        }
+
+        function secilenMetniCoz() {
+            editor.setData(editor.getData().replaceAll(sifresiCozulecekSmallElement.outerHTML, sifresiCozulecekSmallElement.getAttribute('data-pureValue').replaceAll('_#_', '')));
+        }
+
+        function secilenMetniSifrele() {
+            const selection = window.getSelection();
+            const selectedText = selection.toString();
+
+            const resultWithAsteriks = createSmallElementWithAsteriks(selectedText);
+
+
+            if (selectedText.length === 0) {
+                return;
+            }
+
+            if (!!sifresiCozulecekSmallElement && sifresiCozulecekSmallElement.innerText.includes(selectedText.trim())) {
+                alert('Seçili metin zaten şifrelenmiş!!!');
+                return;
+            }
+
+            const latestEditorData = editor.getData();
+            const selectedTextIndexOf = latestEditorData.indexOf(selectedText);
+
+            const leftSideText = latestEditorData.slice(0, selectedTextIndexOf);
+            const rightSideText = latestEditorData.slice(selectedTextIndexOf + selectedText.length);
+            const finalCiperedText = leftSideText + resultWithAsteriks + rightSideText;
+
+            editor.setData(finalCiperedText);
+        }
+
+        function secilenMetniSifrelemeButonEkle() {
+
+            const ckEditorToolbar = document.getElementsByClassName('ck-toolbar__items')[0];
+            const sifreleButonDiv = document.createElement("div");
+            sifreleButonDiv.className = 'ck ck-dropdown';
+
+            // Create a new button element
+            const sifreleButon = document.createElement("button");
+            sifreleButon.className = 'ck ck-button ck-off ck-button';
+            sifreleButon.innerText = "Şifrele";
+            sifreleButon.style.backgroundColor = '#4CAF50';
+            sifreleButon.style.color = 'white';
+            sifreleButon.style.border = 'none';
+            sifreleButon.style.borderRadius = '5px';
+            sifreleButon.style.padding = '1px 5px 1px 5px';
+            sifreleButon.style.fontSize = '12px';
+            sifreleButon.style.cursor = 'pointer';
+
+
+            const sifreCozButon = document.createElement("button");
+            sifreCozButon.className = 'ck ck-button ck-off ck-button';
+            sifreCozButon.innerText = "Çöz";
+            sifreCozButon.style.backgroundColor = '#4CAF50';
+            sifreCozButon.style.color = 'white';
+            sifreCozButon.style.border = 'none';
+            sifreCozButon.style.borderRadius = '5px';
+            sifreCozButon.style.padding = '1px 5px 1px 5px';
+            sifreCozButon.style.fontSize = '12px';
+            sifreCozButon.style.cursor = 'pointer';
+            sifreCozButon.style.marginLeft = '5px';
+
+            sifreleButon.onclick = secilenMetniSifrele;
+            sifreCozButon.onclick = secilenMetniCoz;
+            sifreleButonDiv.appendChild(sifreleButon);
+            sifreleButonDiv.appendChild(sifreCozButon);
+
+            ckEditorToolbar.appendChild(sifreleButonDiv);
+
+            secilenMetniCozmeAyarla();
+        }
 
         function okIkonlariniKaldir() {
             const ikonListesi = document.querySelectorAll('.ck-dropdown__arrow');
@@ -434,7 +554,7 @@
         function guncelleSecilenResim(newImgSrc) {
             if (!!selectedImage) {
                 editor.setData(editor.getData().replaceAll(selectedImage.src, newImgSrc));
-                if(!!selectedImage.srcset){
+                if (!!selectedImage.srcset) {
                     editor.setData(editor.getData().replaceAll(selectedImage.srcset, newImgSrc));
                 }
             }
