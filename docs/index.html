@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>CKEditor 5 - Full demo with code</title>
+    <title>Text Editor</title>
     <script src="./tr.js"></script>
 </head>
 
@@ -136,6 +136,7 @@
         let editor;
         const rakamBoyutlari = []
         let selectedImage = null;
+        let sifresiCozulecekSmallElement = null;
 
         // This sample still does not showcase all CKEditor 5 features (!)
         // Visit https://ckeditor.com/docs/ckeditor5/latest/features/index.html to browse all the features.
@@ -296,8 +297,10 @@
                     if (readedData.indexOf('iframe') != -1) {
                         const iframeBasIndexOf = readedData.indexOf('<iframe');
                         const iframeBitIndexOf = readedData.indexOf('</iframe>');
-                        const newDataa = readedData.slice(0, iframeBasIndexOf) + readedData.slice(iframeBitIndexOf + 9);
-                        editor.setData(newDataa);
+                        if (iframeBasIndexOf != -1 && iframeBitIndexOf != -1) {
+                            const newDataa = readedData.slice(0, iframeBasIndexOf) + readedData.slice(iframeBitIndexOf + 9);
+                            editor.setData(newDataa);
+                        }
                     }
                     else if (readedData.indexOf('Version:0.9 StartHTML:') != -1) {
                         const versionIndexOf = readedData.indexOf('Version:0.9 StartHTML:');
@@ -342,8 +345,124 @@
             ayarlaYaziRengiIcon();
             okIkonlariniKaldir();
             secilenResmiAyarla();
+            //secilenMetniSifrelemeButonEkle();
             //ayarlaFindAndReplace();
         }, 100);
+
+        function secilenMetniCozmeAyarla() {
+            document.addEventListener('mousedown', function (evt) {
+                if (!!evt && !!evt.target && !!evt.target.tagName) {
+                    const selectedTag = evt.target.tagName.toLowerCase();
+                    if (selectedTag != 'button') {
+                        if (evt.target.className.includes('sifrelenmisEleman')) {
+                            sifresiCozulecekSmallElement = evt.srcElement;
+                        }
+                        else if (evt.target.parentElement.className.includes('sifrelenmisEleman')) {
+                            sifresiCozulecekSmallElement = evt.target.parentElement;
+                        }
+                        else {
+                            sifresiCozulecekSmallElement = null;
+                        }
+                    }
+                }
+            }, false);
+        }
+
+        function createSmallElementWithAsteriks(pureValue) {
+
+            let asteriksStr = '';
+            for (let i = 0; i < pureValue.length; i++) {
+                asteriksStr = asteriksStr + '✱';
+            }
+
+            let smallElement = document.createElement("span");
+            smallElement.innerText = asteriksStr;;
+            smallElement.className = 'sifrelenmisEleman';
+            smallElement.setAttribute('data-pureValue', pureValue);
+            smallElement = sifreleStyleUygulaVeyaSil(true, smallElement);
+
+            return smallElement;
+        }
+
+        function sifreleStyleUygulaVeyaSil(uygula = true, smallElement) {
+            if (uygula) {
+                smallElement.style.backgroundColor = '#f4f4f4';
+                smallElement.style.color = '#d63384';
+                smallElement.style.border = '1px solid #ccc';
+                smallElement.style.borderRadius = '3px';
+                smallElement.style.padding = '2px';
+                smallElement.style.fontSize = '13px';
+                return smallElement;
+            }
+            else {
+                smallElement.style.backgroundColor = 'unset';
+                smallElement.style.color = 'unset';
+                smallElement.style.border = 'unset';
+                smallElement.style.borderRadius = 'unset';
+                smallElement.style.padding = 'unset';
+                smallElement.style.fontSize = 'unset';
+                return smallElement;
+            }
+        }
+
+        function secilenMetniCoz() {
+            sifresiCozulecekSmallElement = sifreleStyleUygulaVeyaSil(false, sifresiCozulecekSmallElement);
+            sifresiCozulecekSmallElement.innerText = sifresiCozulecekSmallElement.getAttribute('data-pureValue');
+            editor.setData(document.getElementsByClassName('ck-content')[0].innerHTML);
+        }
+
+        function secilenMetniSifrele() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const selectedText = range.toString();
+
+                if (selectedText) {
+                    // Create a strong element
+                    const resultWithAsteriks = createSmallElementWithAsteriks(selectedText);
+
+                    // Replace the selected text with the strong element
+                    range.deleteContents();
+                    range.insertNode(resultWithAsteriks);
+                }
+            }
+
+            editor.setData(document.getElementsByClassName('ck-content')[0].innerHTML);
+        }
+
+        function secilenMetniSifrelemeButonEkle() {
+
+            const ckEditorToolbar = document.getElementsByClassName('ck-toolbar__items')[0];
+            const sifreleButonDiv = document.createElement("div");
+            sifreleButonDiv.className = 'ck ck-dropdown';
+
+            // Create a new button element
+            const sifreleButon = document.createElement("button");
+            sifreleButon.className = 'ck ck-button ck-off ck-button';
+            sifreleButon.style.backgroundImage = "url('./png/lock.png')";
+            sifreleButon.style.backgroundSize = "cover"; // Optional: make the image cover the button
+            sifreleButon.style.backgroundPosition = "center";
+            sifreleButon.style.backgroundRepeat = "no-repeat"; 
+
+
+            const sifreCozButon = document.createElement("button");
+            sifreCozButon.className = 'ck ck-button ck-off ck-button';
+            sifreCozButon.style.backgroundImage = "url('./png/unlock.png')";
+            sifreCozButon.style.backgroundSize = "cover"; // Optional: make the image cover the button
+            sifreCozButon.style.backgroundPosition = "center";
+            sifreCozButon.style.backgroundRepeat = "no-repeat"; 
+            sifreCozButon.style.marginLeft = '5px';
+            sifreCozButon.style.height='38px';
+
+            sifreleButon.onclick = secilenMetniSifrele;
+            sifreCozButon.onclick = secilenMetniCoz;
+            sifreleButonDiv.appendChild(sifreleButon);
+            sifreleButonDiv.appendChild(sifreCozButon);
+
+            ckEditorToolbar.appendChild(sifreleButonDiv);
+
+            secilenMetniCozmeAyarla();
+        }
 
         function okIkonlariniKaldir() {
             const ikonListesi = document.querySelectorAll('.ck-dropdown__arrow');
@@ -434,7 +553,7 @@
         function guncelleSecilenResim(newImgSrc) {
             if (!!selectedImage) {
                 editor.setData(editor.getData().replaceAll(selectedImage.src, newImgSrc));
-                if(!!selectedImage.srcset){
+                if (!!selectedImage.srcset) {
                     editor.setData(editor.getData().replaceAll(selectedImage.srcset, newImgSrc));
                 }
             }

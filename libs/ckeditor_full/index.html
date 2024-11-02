@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>CKEditor 5 - Full demo with code</title>
+    <title>Text Editor</title>
     <script src="./tr.js"></script>
 </head>
 
@@ -379,7 +379,7 @@
             smallElement.innerText = asteriksStr;;
             smallElement.className = 'sifrelenmisEleman';
             smallElement.setAttribute('data-pureValue', pureValue);
-            smallElement = sifreleStyleUygulaVeyaSil(true,smallElement);
+            smallElement = sifreleStyleUygulaVeyaSil(true, smallElement);
 
             return smallElement;
         }
@@ -387,26 +387,26 @@
         function sifreleStyleUygulaVeyaSil(uygula = true, smallElement) {
             if (uygula) {
                 smallElement.style.backgroundColor = '#f4f4f4';
-                smallElement.style.color = '#d63384'; 
-                smallElement.style.border = '1px solid #ccc'; 
-                smallElement.style.borderRadius = '3px'; 
+                smallElement.style.color = '#d63384';
+                smallElement.style.border = '1px solid #ccc';
+                smallElement.style.borderRadius = '3px';
                 smallElement.style.padding = '2px';
-                smallElement.style.fontSize = '13px'; 
+                smallElement.style.fontSize = '13px';
                 return smallElement;
             }
             else {
                 smallElement.style.backgroundColor = 'unset';
-                smallElement.style.color = 'unset'; 
-                smallElement.style.border = 'unset'; 
-                smallElement.style.borderRadius = 'unset'; 
+                smallElement.style.color = 'unset';
+                smallElement.style.border = 'unset';
+                smallElement.style.borderRadius = 'unset';
                 smallElement.style.padding = 'unset';
-                smallElement.style.fontSize = 'unset'; 
+                smallElement.style.fontSize = 'unset';
                 return smallElement;
             }
         }
 
         function secilenMetniCoz() {
-            sifresiCozulecekSmallElement = sifreleStyleUygulaVeyaSil(false,sifresiCozulecekSmallElement);
+            sifresiCozulecekSmallElement = sifreleStyleUygulaVeyaSil(false, sifresiCozulecekSmallElement);
             sifresiCozulecekSmallElement.innerText = sifresiCozulecekSmallElement.getAttribute('data-pureValue');
             editor.setData(document.getElementsByClassName('ck-content')[0].innerHTML);
         }
@@ -439,27 +439,20 @@
             // Create a new button element
             const sifreleButon = document.createElement("button");
             sifreleButon.className = 'ck ck-button ck-off ck-button';
-            sifreleButon.innerText = "Şifrele";
-            sifreleButon.style.backgroundColor = '#4CAF50';
-            sifreleButon.style.color = 'white';
-            sifreleButon.style.border = 'none';
-            sifreleButon.style.borderRadius = '5px';
-            sifreleButon.style.padding = '1px 5px 1px 5px';
-            sifreleButon.style.fontSize = '12px';
-            sifreleButon.style.cursor = 'pointer';
+            sifreleButon.style.backgroundImage = "url('./png/lock.png')";
+            sifreleButon.style.backgroundSize = "cover"; // Optional: make the image cover the button
+            sifreleButon.style.backgroundPosition = "center";
+            sifreleButon.style.backgroundRepeat = "no-repeat"; 
 
 
             const sifreCozButon = document.createElement("button");
             sifreCozButon.className = 'ck ck-button ck-off ck-button';
-            sifreCozButon.innerText = "Çöz";
-            sifreCozButon.style.backgroundColor = '#4CAF50';
-            sifreCozButon.style.color = 'white';
-            sifreCozButon.style.border = 'none';
-            sifreCozButon.style.borderRadius = '5px';
-            sifreCozButon.style.padding = '1px 5px 1px 5px';
-            sifreCozButon.style.fontSize = '12px';
-            sifreCozButon.style.cursor = 'pointer';
+            sifreCozButon.style.backgroundImage = "url('./png/unlock.png')";
+            sifreCozButon.style.backgroundSize = "cover"; // Optional: make the image cover the button
+            sifreCozButon.style.backgroundPosition = "center";
+            sifreCozButon.style.backgroundRepeat = "no-repeat"; 
             sifreCozButon.style.marginLeft = '5px';
+            sifreCozButon.style.height='38px';
 
             sifreleButon.onclick = secilenMetniSifrele;
             sifreCozButon.onclick = secilenMetniCoz;
