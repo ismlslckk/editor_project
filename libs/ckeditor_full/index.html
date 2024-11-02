@@ -297,8 +297,10 @@
                     if (readedData.indexOf('iframe') != -1) {
                         const iframeBasIndexOf = readedData.indexOf('<iframe');
                         const iframeBitIndexOf = readedData.indexOf('</iframe>');
-                        const newDataa = readedData.slice(0, iframeBasIndexOf) + readedData.slice(iframeBitIndexOf + 9);
-                        editor.setData(newDataa);
+                        if (iframeBasIndexOf != -1 && iframeBitIndexOf != -1) {
+                            const newDataa = readedData.slice(0, iframeBasIndexOf) + readedData.slice(iframeBitIndexOf + 9);
+                            editor.setData(newDataa);
+                        }
                     }
                     else if (readedData.indexOf('Version:0.9 StartHTML:') != -1) {
                         const versionIndexOf = readedData.indexOf('Version:0.9 StartHTML:');
@@ -347,29 +349,6 @@
             //ayarlaFindAndReplace();
         }, 100);
 
-        function countOccurrences(fullText, searchText) {
-            // Convert both strings to lowercase to make the search case-insensitive
-            const lowerFullText = fullText.toLowerCase();
-            const lowerSearchText = searchText.toLowerCase();
-
-            // Use a regular expression to find all occurrences
-            const regex = new RegExp(lowerSearchText, 'g');
-            const matches = lowerFullText.match(regex);
-
-            // Return the number of matches, or 0 if no matches found
-            return matches ? matches.length : 0;
-        }
-
-        function generateRandomString(length) {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                const randomIndex = Math.floor(Math.random() * characters.length);
-                result += characters[randomIndex];
-            }
-            return result;
-        }
-
         function secilenMetniCozmeAyarla() {
             document.addEventListener('mousedown', function (evt) {
                 if (!!evt && !!evt.target && !!evt.target.tagName) {
@@ -396,54 +375,59 @@
                 asteriksStr = asteriksStr + '✱';
             }
 
-            const smallElement = document.createElement("small");
-            smallElement.className = `sifrelenmisEleman${generateRandomString(24)}`;
+            let smallElement = document.createElement("span");
             smallElement.innerText = asteriksStr;;
-            smallElement.setAttribute('data-pureValue', pureValue.split('').join('_#_'));
-            smallElement.style.backgroundColor = '#f4f4f4'; // Light gray background
-            smallElement.style.color = '#d63384'; // Custom text color
-            smallElement.style.border = '1px solid #ccc'; // Border
-            smallElement.style.borderRadius = '3px'; // Rounded corners
-            smallElement.style.padding = '2px';
-            smallElement.style.fontSize = '13px'; // Margin
+            smallElement.className = 'sifrelenmisEleman';
+            smallElement.setAttribute('data-pureValue', pureValue);
+            smallElement = sifreleStyleUygulaVeyaSil(true,smallElement);
 
-            return smallElement.outerHTML;
+            return smallElement;
+        }
+
+        function sifreleStyleUygulaVeyaSil(uygula = true, smallElement) {
+            if (uygula) {
+                smallElement.style.backgroundColor = '#f4f4f4';
+                smallElement.style.color = '#d63384'; 
+                smallElement.style.border = '1px solid #ccc'; 
+                smallElement.style.borderRadius = '3px'; 
+                smallElement.style.padding = '2px';
+                smallElement.style.fontSize = '13px'; 
+                return smallElement;
+            }
+            else {
+                smallElement.style.backgroundColor = 'unset';
+                smallElement.style.color = 'unset'; 
+                smallElement.style.border = 'unset'; 
+                smallElement.style.borderRadius = 'unset'; 
+                smallElement.style.padding = 'unset';
+                smallElement.style.fontSize = 'unset'; 
+                return smallElement;
+            }
         }
 
         function secilenMetniCoz() {
-            editor.setData(editor.getData().replaceAll(sifresiCozulecekSmallElement.outerHTML, sifresiCozulecekSmallElement.getAttribute('data-pureValue').replaceAll('_#_', '')));
+            sifresiCozulecekSmallElement = sifreleStyleUygulaVeyaSil(false,sifresiCozulecekSmallElement);
+            sifresiCozulecekSmallElement.innerText = sifresiCozulecekSmallElement.getAttribute('data-pureValue');
+            editor.setData(document.getElementsByClassName('ck-content')[0].innerHTML);
         }
 
         function secilenMetniSifrele() {
             const selection = window.getSelection();
-            const selectedText = selection.toString();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const selectedText = range.toString();
 
-            const count = countOccurrences(editor.getData(), selectedText);
-            if (count > 1) {
-                alert('Şifrelenecek metin aynı not içerisinde birden fazla geçemez!!!');
-                return;
+                if (selectedText) {
+                    // Create a strong element
+                    const resultWithAsteriks = createSmallElementWithAsteriks(selectedText);
+
+                    // Replace the selected text with the strong element
+                    range.deleteContents();
+                    range.insertNode(resultWithAsteriks);
+                }
             }
 
-            const resultWithAsteriks = createSmallElementWithAsteriks(selectedText);
-
-
-            if (selectedText.length === 0) {
-                return;
-            }
-
-            if (!!sifresiCozulecekSmallElement && sifresiCozulecekSmallElement.innerText.includes(selectedText.trim())) {
-                alert('Seçili metin zaten şifrelenmiş!!!');
-                return;
-            }
-
-            const latestEditorData = editor.getData();
-            const selectedTextIndexOf = latestEditorData.indexOf(selectedText);
-
-            const leftSideText = latestEditorData.slice(0, selectedTextIndexOf);
-            const rightSideText = latestEditorData.slice(selectedTextIndexOf + selectedText.length);
-            const finalCiperedText = leftSideText + resultWithAsteriks + rightSideText;
-
-            editor.setData(finalCiperedText);
+            editor.setData(document.getElementsByClassName('ck-content')[0].innerHTML);
         }
 
         function secilenMetniSifrelemeButonEkle() {
