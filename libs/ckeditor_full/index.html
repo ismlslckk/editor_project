@@ -347,6 +347,19 @@
             //ayarlaFindAndReplace();
         }, 100);
 
+        function countOccurrences(fullText, searchText) {
+            // Convert both strings to lowercase to make the search case-insensitive
+            const lowerFullText = fullText.toLowerCase();
+            const lowerSearchText = searchText.toLowerCase();
+
+            // Use a regular expression to find all occurrences
+            const regex = new RegExp(lowerSearchText, 'g');
+            const matches = lowerFullText.match(regex);
+
+            // Return the number of matches, or 0 if no matches found
+            return matches ? matches.length : 0;
+        }
+
         function generateRandomString(length) {
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
@@ -361,9 +374,12 @@
             document.addEventListener('mousedown', function (evt) {
                 if (!!evt && !!evt.target && !!evt.target.tagName) {
                     const selectedTag = evt.target.tagName.toLowerCase();
-                    if (selectedTag == 'small') {
+                    if (selectedTag != 'button') {
                         if (evt.target.className.includes('sifrelenmisEleman')) {
                             sifresiCozulecekSmallElement = evt.srcElement;
+                        }
+                        else if (evt.target.parentElement.className.includes('sifrelenmisEleman')) {
+                            sifresiCozulecekSmallElement = evt.target.parentElement;
                         }
                         else {
                             sifresiCozulecekSmallElement = null;
@@ -401,6 +417,12 @@
         function secilenMetniSifrele() {
             const selection = window.getSelection();
             const selectedText = selection.toString();
+
+            const count = countOccurrences(editor.getData(), selectedText);
+            if (count > 1) {
+                alert('Şifrelenecek metin aynı not içerisinde birden fazla geçemez!!!');
+                return;
+            }
 
             const resultWithAsteriks = createSmallElementWithAsteriks(selectedText);
 
