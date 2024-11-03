@@ -408,7 +408,7 @@
         function secilenMetniCoz() {
             sifresiCozulecekSmallElement = sifreleStyleUygulaVeyaSil(false, sifresiCozulecekSmallElement);
             sifresiCozulecekSmallElement.innerText = sifresiCozulecekSmallElement.getAttribute('data-pureValue');
-            editor.setData(document.getElementsByClassName('ck-content')[0].innerHTML);
+            editor.setData(getEditorData());
         }
 
         function secilenMetniSifrele() {
@@ -427,7 +427,12 @@
                 }
             }
 
-            editor.setData(document.getElementsByClassName('ck-content')[0].innerHTML);
+            editor.setData(getEditorData());
+        }
+
+
+        function getEditorData() {
+            return document.getElementsByClassName('ck-content')[0].innerHTML;
         }
 
         function secilenMetniSifrelemeButonEkle() {
@@ -442,7 +447,7 @@
             sifreleButon.style.backgroundImage = "url('./png/lock.png')";
             sifreleButon.style.backgroundSize = "cover"; // Optional: make the image cover the button
             sifreleButon.style.backgroundPosition = "center";
-            sifreleButon.style.backgroundRepeat = "no-repeat"; 
+            sifreleButon.style.backgroundRepeat = "no-repeat";
 
 
             const sifreCozButon = document.createElement("button");
@@ -450,9 +455,9 @@
             sifreCozButon.style.backgroundImage = "url('./png/unlock.png')";
             sifreCozButon.style.backgroundSize = "cover"; // Optional: make the image cover the button
             sifreCozButon.style.backgroundPosition = "center";
-            sifreCozButon.style.backgroundRepeat = "no-repeat"; 
+            sifreCozButon.style.backgroundRepeat = "no-repeat";
             sifreCozButon.style.marginLeft = '5px';
-            sifreCozButon.style.height='38px';
+            sifreCozButon.style.height = '38px';
 
             sifreleButon.onclick = secilenMetniSifrele;
             sifreCozButon.onclick = secilenMetniCoz;
