@@ -346,7 +346,7 @@
             okIkonlariniKaldir();
             secilenResmiAyarla();
             //secilenMetniSifrelemeButonEkle();
-            //uyariAyarla();
+            uyariAyarla();
             //ayarlaFindAndReplace();
         }, 100);
 
@@ -479,15 +479,12 @@
             uyariDiv.style.overflow = 'hidden';
             uyariDiv.style.right = '0';
             uyariDiv.style.display = 'none';
-            uyariDiv.style.maxWidth = '500px';
 
             // Create a new button element
             const p = document.createElement("p");
             p.id = 'uyariMesajEleman';
             p.style.color = 'red';
             p.style.fontWeight = '600';
-            p.style.border = 'solid 1px lightgray';
-            p.style.borderRadius = '7px';
             p.style.padding = '5px';
 
             uyariDiv.appendChild(p);
@@ -504,7 +501,7 @@
             kayanYaziEleman.innerText = text;
         }
 
-        function uyariGizle(text) {
+        function uyariGizle() {
             const uyariDiv = document.getElementById("uyariDiv");
             uyariDiv.style.display = 'none';
         }

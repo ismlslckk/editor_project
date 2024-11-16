@@ -346,6 +346,7 @@
             okIkonlariniKaldir();
             secilenResmiAyarla();
             //secilenMetniSifrelemeButonEkle();
+            uyariAyarla();
             //ayarlaFindAndReplace();
         }, 100);
 
@@ -467,6 +468,42 @@
             ckEditorToolbar.appendChild(sifreleButonDiv);
 
             secilenMetniCozmeAyarla();
+        }
+
+        function uyariAyarla() {
+
+            const ckEditorToolbar = document.getElementsByClassName('ck-toolbar__items')[0];
+            const uyariDiv = document.createElement("div");
+            uyariDiv.id = 'uyariDiv';
+            uyariDiv.style.position = 'absolute';
+            uyariDiv.style.overflow = 'hidden';
+            uyariDiv.style.right = '0';
+            uyariDiv.style.display = 'none';
+
+            // Create a new button element
+            const p = document.createElement("p");
+            p.id = 'uyariMesajEleman';
+            p.style.color = 'red';
+            p.style.fontWeight = '600';
+            p.style.padding = '5px';
+
+            uyariDiv.appendChild(p);
+
+            ckEditorToolbar.appendChild(uyariDiv);
+
+        }
+
+        function uyariGoster(text) {
+            const uyariDiv = document.getElementById("uyariDiv");
+            uyariDiv.style.display = 'block';
+
+            const kayanYaziEleman = document.getElementById("uyariMesajEleman");
+            kayanYaziEleman.innerText = text;
+        }
+
+        function uyariGizle() {
+            const uyariDiv = document.getElementById("uyariDiv");
+            uyariDiv.style.display = 'none';
         }
 
         function okIkonlariniKaldir() {
