@@ -252,7 +252,7 @@ setTimeout(() => {
     ayarlaYaziRengiIcon();
     okIkonlariniKaldir();
     secilenResmiAyarla();
-    //secilenMetniSifrelemeButonEkle();
+    secilenMetniSifrelemeButonEkle();
     uyariAyarla();
     //ayarlaFindAndReplace();
 }, 100);

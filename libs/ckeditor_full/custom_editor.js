@@ -171,6 +171,8 @@ CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
         // These two are commercial, but you can try them out without registering to a trial.
         // 'ExportPdf',
         // 'ExportWord',
+        'YouTube',
+        'MediaEmbed',
         'CKBox',
         'CKFinder',
         'EasyImage',
@@ -252,7 +254,7 @@ setTimeout(() => {
     ayarlaYaziRengiIcon();
     okIkonlariniKaldir();
     secilenResmiAyarla();
-    //secilenMetniSifrelemeButonEkle();
+    secilenMetniSifrelemeButonEkle();
     uyariAyarla();
     //ayarlaFindAndReplace();
 }, 100);
