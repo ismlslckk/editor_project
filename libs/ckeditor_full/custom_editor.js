@@ -358,6 +358,7 @@ function secilenMetniSifrelemeButonEkle() {
     sifreleButon.style.backgroundSize = "cover"; // Optional: make the image cover the button
     sifreleButon.style.backgroundPosition = "center";
     sifreleButon.style.backgroundRepeat = "no-repeat";
+    sifreleButon.style.fontSize = "10px";
 
 
     const sifreCozButon = document.createElement("button");
@@ -367,7 +368,7 @@ function secilenMetniSifrelemeButonEkle() {
     sifreCozButon.style.backgroundPosition = "center";
     sifreCozButon.style.backgroundRepeat = "no-repeat";
     sifreCozButon.style.marginLeft = '5px';
-    sifreCozButon.style.height = '38px';
+    sifreCozButon.style.fontSize = "13px";
 
     sifreleButon.onclick = secilenMetniSifrele;
     sifreCozButon.onclick = secilenMetniCoz;
