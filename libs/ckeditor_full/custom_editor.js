@@ -199,31 +199,37 @@ CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
 }).then(newEditor => {
     editor = newEditor;
 
-    editor.model.document.on('change:data', (evt, data) => {
+    let typingTimer;
+    const doneTypingInterval = 1000; // Adjust the delay as needed (e.g., 1 second)
+    clearTimeout(typingTimer); // Reset the timer each time the event fires
 
-        if ((fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)) {
-            const readedData = editor.getData();
-            if (readedData.indexOf('iframe') != -1) {
-                const iframeBasIndexOf = readedData.indexOf('<iframe');
-                const iframeBitIndexOf = readedData.indexOf('</iframe>');
-                if (iframeBasIndexOf != -1 && iframeBitIndexOf != -1) {
-                    const newDataa = readedData.slice(0, iframeBasIndexOf) + readedData.slice(iframeBitIndexOf + 9);
+    editor.model.document.on('change:data', (evt, data) => {
+        clearTimeout(typingTimer); // Reset the timer each time the event fires
+    
+        typingTimer = setTimeout(() => {
+            if ((fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)) {
+                const readedData = editor.getData();
+    
+                if (readedData.includes('iframe')) {
+                    const iframeBasIndexOf = readedData.indexOf('<iframe');
+                    const iframeBitIndexOf = readedData.indexOf('</iframe>');
+                    if (iframeBasIndexOf !== -1 && iframeBitIndexOf !== -1) {
+                        const newDataa = readedData.slice(0, iframeBasIndexOf) + readedData.slice(iframeBitIndexOf + 9);
+                        editor.setData(newDataa);
+                    }
+                } else if (readedData.includes('Version:0.9 StartHTML:')) {
+                    const versionIndexOf = readedData.indexOf('Version:0.9 StartHTML:');
+                    const blockedIndexOf = readedData.indexOf('SourceURL:about:blank#blocked');
+                    if (versionIndexOf !== -1 && blockedIndexOf !== -1) {
+                        const newDataa = readedData.slice(0, versionIndexOf) + readedData.slice(blockedIndexOf + 29);
+                        editor.setData(newDataa);
+                    }
+                } else if (readedData.includes('"=""')) {
+                    const newDataa = readedData.replaceAll('"=""', '');
                     editor.setData(newDataa);
                 }
             }
-            else if (readedData.indexOf('Version:0.9 StartHTML:') != -1) {
-                const versionIndexOf = readedData.indexOf('Version:0.9 StartHTML:');
-                const blockedIndexOf = readedData.indexOf('SourceURL:about:blank#blocked');
-                const newDataa = readedData.slice(0, versionIndexOf) + readedData.slice(blockedIndexOf + 29);
-                editor.setData(newDataa);
-            }
-            else if (readedData.indexOf('"=""') != -1) {
-                const newDataa = readedData.replaceAll('"=""', '')
-                editor.setData(newDataa);
-            }
-        }
-
-
+        }, doneTypingInterval); // Wait for user to stop typing
     });
 
     editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
