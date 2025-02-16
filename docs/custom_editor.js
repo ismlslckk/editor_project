@@ -205,11 +205,11 @@ CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
 
     editor.model.document.on('change:data', (evt, data) => {
         clearTimeout(typingTimer); // Reset the timer each time the event fires
-    
+
         typingTimer = setTimeout(() => {
             if ((fileUploadLoader?.loader.status === 'idle' || fileUploadLoader?.loader.status === 'aborted' || !fileUploadLoader)) {
                 const readedData = editor.getData();
-    
+
                 if (readedData.includes('iframe')) {
                     const iframeBasIndexOf = readedData.indexOf('<iframe');
                     const iframeBitIndexOf = readedData.indexOf('</iframe>');
@@ -263,17 +263,75 @@ setTimeout(() => {
     secilenMetniSifrelemeButonEkle();
     uyariAyarla();
     //ayarlaFindAndReplace();
+    //denemeSimgeliIcon();
 }, 100);
+
+
+// Remove previous highlights before applying new ones
+function removeHighlights(element, updateHtml = false) {
+    if (!element)
+        element = document.getElementById("container");
+    let highlighted = element.querySelectorAll("span.highlight_custom");
+    if (highlighted) {
+        highlighted.forEach(span => {
+            span.replaceWith(document.createTextNode(span.textContent));
+        });
+
+        if (updateHtml)
+            editor.setData(getEditorData());
+    }
+}
+
+function highlightText(term) {
+    if (term == "") {
+        return;
+    }
+
+    let contentContainer = document.getElementById("container");
+
+    // Function to recursively process text nodes
+    function highlightNodes(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            let regex = new RegExp(`(${term})`, "gi");
+            if (node.textContent.match(regex)) {
+                let span = document.createElement("span");
+                span.innerHTML = node.textContent.replace(regex, `<span class="highlight_custom">$1</span>`);
+                node.replaceWith(span);
+            }
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== "IMG") {
+            // Process child nodes but ignore <img> tags
+            Array.from(node.childNodes).forEach(highlightNodes);
+        }
+    }
+
+    removeHighlights(contentContainer);
+    highlightNodes(contentContainer);
+    editor.setData(getEditorData());
+}
+
+function denemeSimgeliIcon() {
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            const allLiElements = document.querySelectorAll('li');
+            if (allLiElements.length > 0) {
+                document.querySelectorAll('li').forEach(li => {
+                    li.classList.remove('todo-list');
+                });
+            }
+        }
+    });
+
+}
 
 function secilenMetniCozmeAyarla() {
     document.addEventListener('mousedown', function (evt) {
         if (!!evt && !!evt.target && !!evt.target.tagName) {
             const selectedTag = evt.target.tagName.toLowerCase();
             if (selectedTag != 'button') {
-                if (evt.target.className.includes('sifrelenmisEleman')) {
+                if (evt.target.className.toString().includes('sifrelenmisEleman')) {
                     sifresiCozulecekSmallElement = evt.srcElement;
                 }
-                else if (evt.target.parentElement.className.includes('sifrelenmisEleman')) {
+                else if (evt.target.parentElement.className.toString().includes('sifrelenmisEleman')) {
                     sifresiCozulecekSmallElement = evt.target.parentElement;
                 }
                 else {
@@ -434,6 +492,7 @@ function turkcelestir(eskiTooltipText, yeniTooltipText) {
 }
 
 function guncelIcerigiDoldur() {
+    removeHighlights(null, true);
     window.CkEditorBilgi.guncelIcerik = editor.getData();
 }
 
