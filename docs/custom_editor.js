@@ -292,7 +292,17 @@ function highlightText(term) {
     // Function to recursively process text nodes
     function highlightNodes(node) {
         if (node.nodeType === Node.TEXT_NODE) {
-            let regex = new RegExp(`(${term})`, "gi");
+            // Turkish characters regex pattern with explicit handling
+            let regex = new RegExp(`(${term.replace(/([iI])/g, '[iıİI]')
+                .replace(/([çÇ])/g, '[çÇ]')
+                .replace(/([ğĞ])/g, '[ğĞ]')
+                .replace(/([öÖ])/g, '[öÖ]')
+                .replace(/([üÜ])/g, '[üÜ]')
+                .replace(/([şŞ])/g, '[şŞ]')
+                .replace(/([cC])/g, '[cC]')
+                .replace(/([gG])/g, '[gG]')
+                .replace(/([oO])/g, '[oO]')
+                .replace(/([uU])/g, '[uU]')})`, "gui");
             if (node.textContent.match(regex)) {
                 let span = document.createElement("span");
                 span.innerHTML = node.textContent.replace(regex, `<span class="highlight_custom">$1</span>`);
@@ -308,6 +318,7 @@ function highlightText(term) {
     highlightNodes(contentContainer);
     editor.setData(getEditorData());
 }
+
 
 function denemeSimgeliIcon() {
     document.addEventListener('keydown', function (event) {
