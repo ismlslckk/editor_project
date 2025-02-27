@@ -229,6 +229,7 @@ CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
                     editor.setData(newDataa);
                 }
             }
+        wpfEventFirlat('editorStatus','available');
         }, doneTypingInterval); // Wait for user to stop typing
     });
 
@@ -262,9 +263,21 @@ setTimeout(() => {
     secilenResmiAyarla();
     secilenMetniSifrelemeButonEkle();
     uyariAyarla();
+    eventListelenerAyarla();
     //ayarlaFindAndReplace();
     //denemeSimgeliIcon();
 }, 100);
+
+
+function eventListelenerAyarla(){
+    CefSharp.BindObjectAsync("eventListener").then(function() {
+        console.log("eventListener is now available!");
+    
+        document.addEventListener('callbackForWpf', function(event) {
+            eventListener.onJsEvent(JSON.stringify(event.detail));
+        });
+    });
+}
 
 
 // Remove previous highlights before applying new ones
@@ -508,7 +521,13 @@ function guncelIcerigiDoldur() {
 }
 
 function editoruDoldur() {
+    wpfEventFirlat('editorStatus','busy');
     editor.setData(window.CkEditorBilgi.disaridanEklenenIcerik);
+}
+
+function wpfEventFirlat(action,detail){
+    var event = new CustomEvent('callbackForWpf', { detail:{Action: action,Detail: detail} });
+    document.dispatchEvent(event);
 }
 
 function rakamSvgAyarla(rakam) {
