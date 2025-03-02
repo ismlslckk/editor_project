@@ -302,35 +302,84 @@ function highlightText(term) {
 
     let contentContainer = document.getElementById("container");
 
-    // Function to recursively process text nodes
+    // Function to normalize Turkish characters for case-insensitive matching
+    function normalizeTurkish(text) {
+        return text
+            .toLocaleLowerCase("tr-TR") // Ensures Turkish-specific case conversion
+            .replace(/ı/g, "i").replace(/I/g, "ı")
+            .replace(/İ/g, "i").replace(/ç/g, "c")
+            .replace(/Ç/g, "c").replace(/ğ/g, "g")
+            .replace(/Ğ/g, "g").replace(/ö/g, "o")
+            .replace(/Ö/g, "o").replace(/ş/g, "s")
+            .replace(/Ş/g, "s").replace(/ü/g, "u")
+            .replace(/Ü/g, "u");
+    }
+
     function highlightNodes(node) {
         if (node.nodeType === Node.TEXT_NODE) {
-            // Turkish characters regex pattern with explicit handling
-            let regex = new RegExp(`(${term.replace(/([iI])/g, '[iıİI]')
-                .replace(/([çÇ])/g, '[çÇ]')
-                .replace(/([ğĞ])/g, '[ğĞ]')
-                .replace(/([öÖ])/g, '[öÖ]')
-                .replace(/([üÜ])/g, '[üÜ]')
-                .replace(/([şŞ])/g, '[şŞ]')
-                .replace(/([cC])/g, '[cC]')
-                .replace(/([gG])/g, '[gG]')
-                .replace(/([oO])/g, '[oO]')
-                .replace(/([uU])/g, '[uU]')})`, "gui");
-            if (node.textContent.match(regex)) {
+            let originalText = node.textContent;
+            let normalizedText = normalizeTurkish(originalText);
+            let normalizedTerm = normalizeTurkish(term);
+
+            let regex = new RegExp(normalizedTerm, "gi"); // Case-insensitive search
+            let match;
+            let newHTML = "";
+            let lastIndex = 0;
+            let matches = [];
+
+            // Find all matches in normalized text
+            while ((match = regex.exec(normalizedText)) !== null) {
+                matches.push({ start: match.index, length: match[0].length });
+            }
+
+            let charMap = [];
+            let normalizedIndex = 0;
+
+            // Create a map of normalizedText indices to originalText indices
+            for (let i = 0; i < originalText.length; i++) {
+                if (normalizedIndex < normalizedText.length && 
+                    normalizeTurkish(originalText[i]) === normalizedText[normalizedIndex]) {
+                    charMap[normalizedIndex] = i;
+                    normalizedIndex++;
+                }
+            }
+
+            // Highlight matched text using the original indices
+            matches.forEach(({ start, length }) => {
+                let startIndex = charMap[start];
+                let endIndex = charMap[start + length - 1] + 1; // Ensure full match is captured
+
+                newHTML += originalText.substring(lastIndex, startIndex) + 
+                           `<span class="highlight_custom">${originalText.substring(startIndex, endIndex)}</span>`;
+                lastIndex = endIndex;
+            });
+
+            newHTML += originalText.substring(lastIndex);
+
+            if (newHTML !== originalText) {
                 let span = document.createElement("span");
-                span.innerHTML = node.textContent.replace(regex, `<span class="highlight_custom">$1</span>`);
+                span.innerHTML = newHTML;
                 node.replaceWith(span);
             }
         } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== "IMG") {
-            // Process child nodes but ignore <img> tags
             Array.from(node.childNodes).forEach(highlightNodes);
         }
+    }
+
+    function removeHighlights(container) {
+        if (!container) return;
+        let highlightedElements = container.querySelectorAll(".highlight_custom");
+        highlightedElements.forEach((el) => {
+            el.replaceWith(document.createTextNode(el.textContent));
+        });
     }
 
     removeHighlights(contentContainer);
     highlightNodes(contentContainer);
     editor.setData(getEditorData());
 }
+
+
 
 
 function denemeSimgeliIcon() {
