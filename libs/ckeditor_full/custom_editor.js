@@ -200,7 +200,7 @@ CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
     editor = newEditor;
 
     let typingTimer;
-    const doneTypingInterval = 1000; // Adjust the delay as needed (e.g., 1 second)
+    const doneTypingInterval = 500; // Adjust the delay as needed (e.g., 1 second)
     clearTimeout(typingTimer); // Reset the timer each time the event fires
 
     editor.model.document.on('change:data', (evt, data) => {
