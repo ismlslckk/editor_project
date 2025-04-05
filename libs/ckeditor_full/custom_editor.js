@@ -463,6 +463,10 @@ function secilenMetniSifrele() {
     if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
         const selectedText = range.toString();
+        if(selectedText.includes('✱')){
+            alert('seçilen alanda daha önce şifrelenmiş kısımlar mevcut!!!');
+            return;
+        }
 
         if (selectedText) {
             // Create a strong element
