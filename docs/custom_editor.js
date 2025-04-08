@@ -1,4 +1,3 @@
-
 window.CkEditorBilgi = window.CkEditorBilgi || { disaridanEklenenIcerik: '', guncelIcerik: '' };
 
 class MyUploadAdapter {
@@ -464,7 +463,7 @@ function secilenMetniSifrele() {
         const range = selection.getRangeAt(0);
         const selectedText = range.toString();
         if(selectedText.includes('✱')){
-            alert('seçilen alanda daha önce şifrelenmiş kısımlar mevcut!!!');
+            showModal('Seçilen alanda daha önce şifrelenmiş kısımlar mevcut!!!');
             return;
         }
 
@@ -671,3 +670,64 @@ window.onerror = function (message, url, lineNumber) {
     console.log({ message })
     return true;
 };
+
+function showModal(message) {
+    // Create modal container
+    const modalContainer = document.createElement('div');
+    modalContainer.style.position = 'fixed';
+    modalContainer.style.top = '0';
+    modalContainer.style.left = '0';
+    modalContainer.style.width = '100%';
+    modalContainer.style.height = '100%';
+    modalContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    modalContainer.style.display = 'flex';
+    modalContainer.style.justifyContent = 'center';
+    modalContainer.style.alignItems = 'center';
+    modalContainer.style.zIndex = '9999';
+
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = 'white';
+    modalContent.style.padding = '20px';
+    modalContent.style.borderRadius = '5px';
+    modalContent.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+    modalContent.style.maxWidth = '400px';
+    modalContent.style.width = '90%';
+
+    // Create message
+    const messageElement = document.createElement('p');
+    messageElement.textContent = message;
+    messageElement.style.margin = '0 0 20px 0';
+    messageElement.style.color = '#333';
+
+    // Create OK button
+    const okButton = document.createElement('button');
+    okButton.textContent = 'Tamam';
+    okButton.style.padding = '8px 20px';
+    okButton.style.backgroundColor = '#007bff';
+    okButton.style.color = 'white';
+    okButton.style.border = 'none';
+    okButton.style.borderRadius = '4px';
+    okButton.style.cursor = 'pointer';
+    okButton.style.float = 'right';
+    okButton.style.marginTop='15px';
+
+    // Add hover effect
+    okButton.onmouseover = () => {
+        okButton.style.backgroundColor = '#0056b3';
+    };
+    okButton.onmouseout = () => {
+        okButton.style.backgroundColor = '#007bff';
+    };
+
+    // Add click handler
+    okButton.onclick = () => {
+        document.body.removeChild(modalContainer);
+    };
+
+    // Assemble modal
+    modalContent.appendChild(messageElement);
+    modalContent.appendChild(okButton);
+    modalContainer.appendChild(modalContent);
+    document.body.appendChild(modalContainer);
+}
