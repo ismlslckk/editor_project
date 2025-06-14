@@ -228,7 +228,7 @@ CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
                     editor.setData(newDataa);
                 }
             }
-        wpfEventFirlat('editorStatus','available');
+            wpfEventFirlat('editorStatus', 'available');
         }, doneTypingInterval); // Wait for user to stop typing
     });
 
@@ -262,17 +262,27 @@ setTimeout(() => {
     secilenResmiAyarla();
     secilenMetniSifrelemeButonEkle();
     uyariAyarla();
+    defaultYaziBoyutunuDegistir();
     eventListelenerAyarla();
     //ayarlaFindAndReplace();
     //denemeSimgeliIcon();
 }, 100);
 
+function defaultYaziBoyutunuDegistir() {
 
-function eventListelenerAyarla(){
-    CefSharp.BindObjectAsync("eventListener").then(function() {
+    const fontSizeIcon = document.querySelector('[data-cke-tooltip-text="Yazı Boyutu"]');
+    const span = Array.from(document.querySelectorAll("ul.ck-list span"))
+        .find(el => el.textContent.trim() === "Default");
+
+    if (!!span)
+        span.innerHTML = '16';
+}
+
+function eventListelenerAyarla() {
+    CefSharp.BindObjectAsync("eventListener").then(function () {
         console.log("eventListener is now available!");
-    
-        document.addEventListener('callbackForWpf', function(event) {
+
+        document.addEventListener('callbackForWpf', function (event) {
             eventListener.onJsEvent(JSON.stringify(event.detail));
         });
     });
@@ -336,7 +346,7 @@ function highlightText(term) {
 
             // Create a map of normalizedText indices to originalText indices
             for (let i = 0; i < originalText.length; i++) {
-                if (normalizedIndex < normalizedText.length && 
+                if (normalizedIndex < normalizedText.length &&
                     normalizeTurkish(originalText[i]) === normalizedText[normalizedIndex]) {
                     charMap[normalizedIndex] = i;
                     normalizedIndex++;
@@ -348,8 +358,8 @@ function highlightText(term) {
                 let startIndex = charMap[start];
                 let endIndex = charMap[start + length - 1] + 1; // Ensure full match is captured
 
-                newHTML += originalText.substring(lastIndex, startIndex) + 
-                           `<span class="highlight_custom">${originalText.substring(startIndex, endIndex)}</span>`;
+                newHTML += originalText.substring(lastIndex, startIndex) +
+                    `<span class="highlight_custom">${originalText.substring(startIndex, endIndex)}</span>`;
                 lastIndex = endIndex;
             });
 
@@ -462,7 +472,7 @@ function secilenMetniSifrele() {
     if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
         const selectedText = range.toString();
-        if(selectedText.includes('✱')){
+        if (selectedText.includes('✱')) {
             showModal('Seçilen alanda daha önce şifrelenmiş kısımlar mevcut!!!');
             return;
         }
@@ -573,12 +583,12 @@ function guncelIcerigiDoldur() {
 }
 
 function editoruDoldur() {
-    wpfEventFirlat('editorStatus','busy');
+    wpfEventFirlat('editorStatus', 'busy');
     editor.setData(window.CkEditorBilgi.disaridanEklenenIcerik);
 }
 
-function wpfEventFirlat(action,detail){
-    var event = new CustomEvent('callbackForWpf', { detail:{Action: action,Detail: detail} });
+function wpfEventFirlat(action, detail) {
+    var event = new CustomEvent('callbackForWpf', { detail: { Action: action, Detail: detail } });
     document.dispatchEvent(event);
 }
 
@@ -587,7 +597,7 @@ function rakamSvgAyarla(rakam) {
     const fontSizeIcon = document.querySelector('[data-cke-tooltip-text="Yazı Boyutu"]');
 
     let img = document.createElement('img');
-    img.src = `./png/${rakam}.png`;
+    img.src = rakam == '16' ? './png/Default.png' : `./png/${rakam}.png`;
     img.style.width = '25px';
     img.style.height = '25px';
 
@@ -710,7 +720,7 @@ function showModal(message) {
     okButton.style.borderRadius = '4px';
     okButton.style.cursor = 'pointer';
     okButton.style.float = 'right';
-    okButton.style.marginTop='15px';
+    okButton.style.marginTop = '15px';
 
     // Add hover effect
     okButton.onmouseover = () => {
