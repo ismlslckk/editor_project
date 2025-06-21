@@ -115,7 +115,7 @@ CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
     },
     // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-size-feature
     fontSize: {
-        options: [10, 12, 14, 'default', 18, 20, 22, 24, 26],
+        options: [10, 12, 14, 'default', 18, 20, 22, 24, 26,28,30,32,34,36],
         supportAllValues: true
     },
     // Be careful with the setting below. It instructs CKEditor to accept ALL HTML markup.
