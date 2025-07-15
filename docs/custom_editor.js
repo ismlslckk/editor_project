@@ -462,9 +462,12 @@ function sifreleStyleUygulaVeyaSil(uygula = true, smallElement) {
 }
 
 function secilenMetniCoz() {
-    sifresiCozulecekSmallElement = sifreleStyleUygulaVeyaSil(false, sifresiCozulecekSmallElement);
-    sifresiCozulecekSmallElement.innerText = sifresiCozulecekSmallElement.getAttribute('data-pureValue');
-    editor.setData(getEditorData());
+    if (sifresiCozulecekSmallElement) {
+        sifresiCozulecekSmallElement = sifreleStyleUygulaVeyaSil(false, sifresiCozulecekSmallElement);
+        sifresiCozulecekSmallElement.innerText = sifresiCozulecekSmallElement.getAttribute('data-pureValue');
+        sifresiCozulecekSmallElement.classList.remove('sifrelenmisEleman');
+        editor.setData(getEditorData());
+    }
 }
 
 function secilenMetniSifrele() {
@@ -478,16 +481,87 @@ function secilenMetniSifrele() {
         }
 
         if (selectedText) {
-            // Create a strong element
-            const resultWithAsteriks = createSmallElementWithAsteriks(selectedText);
+            // Check if there's already encrypted content in the selection
+            const fragment = range.cloneContents();
+            const hasEncryptedContent = fragment.querySelector('.sifrelenmisEleman');
+            if (hasEncryptedContent) {
+                showModal('Seçilen alanda daha önce şifrelenmiş kısımlar mevcut!!!');
+                return;
+            }
 
-            // Replace the selected text with the strong element
-            range.deleteContents();
-            range.insertNode(resultWithAsteriks);
+            // Process the selection to preserve HTML structure
+            processSelectionForEncryption(range);
         }
     }
 
     editor.setData(getEditorData());
+}
+
+function processSelectionForEncryption(range) {
+    // Get all text nodes within the range
+    const textNodes = getTextNodesInRange(range);
+    
+    // If no text nodes found, try a fallback approach
+    if (textNodes.length === 0) {
+        const selectedText = range.toString();
+        if (selectedText.trim()) {
+            // Create a simple span with the selected text
+            const encryptedElement = createSmallElementWithAsteriks(selectedText);
+            range.deleteContents();
+            range.insertNode(encryptedElement);
+        }
+        return;
+    }
+    
+    // Process each text node
+    textNodes.forEach(textNode => {
+        if (textNode.textContent.trim()) {
+            const text = textNode.textContent;
+            const encryptedElement = createSmallElementWithAsteriks(text);
+            textNode.parentNode.replaceChild(encryptedElement, textNode);
+        }
+    });
+}
+
+function getTextNodesInRange(range) {
+    const textNodes = [];
+    
+    // Handle collapsed ranges (no selection)
+    if (range.collapsed) {
+        return textNodes;
+    }
+    
+    // Get the start and end containers
+    const startContainer = range.startContainer;
+    const endContainer = range.endContainer;
+    
+    // If start and end are the same text node
+    if (startContainer === endContainer && startContainer.nodeType === Node.TEXT_NODE) {
+        textNodes.push(startContainer);
+        return textNodes;
+    }
+    
+    // Use TreeWalker for more complex selections
+    const walker = document.createTreeWalker(
+        range.commonAncestorContainer,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode: function(node) {
+                // Check if the text node is within the range
+                if (range.intersectsNode(node)) {
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+                return NodeFilter.FILTER_REJECT;
+            }
+        }
+    );
+    
+    let node;
+    while (node = walker.nextNode()) {
+        textNodes.push(node);
+    }
+    
+    return textNodes;
 }
 
 
