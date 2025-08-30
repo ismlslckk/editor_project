@@ -256,6 +256,7 @@ setTimeout(() => {
         }
     });
 
+    disableRightClickForToolbar();
     ayarlaRakamBoyutlari();
     ayarlaYaziRengiIcon();
     okIkonlariniKaldir();
@@ -267,6 +268,16 @@ setTimeout(() => {
     //ayarlaFindAndReplace();
     //denemeSimgeliIcon();
 }, 100);
+
+function disableRightClickForToolbar() {
+    const ckEditorToolbar = document.getElementsByClassName('ck-toolbar__items')[0];
+    
+    // Disable right-click on CKEditor toolbar
+    ckEditorToolbar.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+}
 
 function defaultYaziBoyutunuDegistir() {
 
