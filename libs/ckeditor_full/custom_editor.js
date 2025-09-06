@@ -115,7 +115,7 @@ CKEDITOR.ClassicEditor.create(document.getElementById("editor"), {
     },
     // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-size-feature
     fontSize: {
-        options: [10, 12, 14, 'default', 18, 20, 22, 24, 26,28,30,32,34,36],
+        options: [10, 12, 14, 'default', 18, 20, 22, 24, 26, 28, 30, 32, 34, 36],
         supportAllValues: true
     },
     // Be careful with the setting below. It instructs CKEditor to accept ALL HTML markup.
@@ -264,6 +264,7 @@ setTimeout(() => {
     secilenMetniSifrelemeButonEkle();
     uyariAyarla();
     defaultYaziBoyutunuDegistir();
+    havaDurumuButonEkle();
     eventListelenerAyarla();
     //ayarlaFindAndReplace();
     //denemeSimgeliIcon();
@@ -271,9 +272,9 @@ setTimeout(() => {
 
 function disableRightClickForToolbar() {
     const ckEditorToolbar = document.getElementsByClassName('ck-toolbar__items')[0];
-    
+
     // Disable right-click on CKEditor toolbar
-    ckEditorToolbar.addEventListener('contextmenu', function(e) {
+    ckEditorToolbar.addEventListener('contextmenu', function (e) {
         e.preventDefault();
         return false;
     });
@@ -511,7 +512,7 @@ function secilenMetniSifrele() {
 function processSelectionForEncryption(range) {
     // Get all text nodes within the range
     const textNodes = getTextNodesInRange(range);
-    
+
     // If no text nodes found, try a fallback approach
     if (textNodes.length === 0) {
         const selectedText = range.toString();
@@ -523,7 +524,7 @@ function processSelectionForEncryption(range) {
         }
         return;
     }
-    
+
     // Process each text node
     textNodes.forEach(textNode => {
         if (textNode.textContent.trim()) {
@@ -536,28 +537,28 @@ function processSelectionForEncryption(range) {
 
 function getTextNodesInRange(range) {
     const textNodes = [];
-    
+
     // Handle collapsed ranges (no selection)
     if (range.collapsed) {
         return textNodes;
     }
-    
+
     // Get the start and end containers
     const startContainer = range.startContainer;
     const endContainer = range.endContainer;
-    
+
     // If start and end are the same text node
     if (startContainer === endContainer && startContainer.nodeType === Node.TEXT_NODE) {
         textNodes.push(startContainer);
         return textNodes;
     }
-    
+
     // Use TreeWalker for more complex selections
     const walker = document.createTreeWalker(
         range.commonAncestorContainer,
         NodeFilter.SHOW_TEXT,
         {
-            acceptNode: function(node) {
+            acceptNode: function (node) {
                 // Check if the text node is within the range
                 if (range.intersectsNode(node)) {
                     return NodeFilter.FILTER_ACCEPT;
@@ -566,12 +567,12 @@ function getTextNodesInRange(range) {
             }
         }
     );
-    
+
     let node;
     while (node = walker.nextNode()) {
         textNodes.push(node);
     }
-    
+
     return textNodes;
 }
 
@@ -825,4 +826,14 @@ function showModal(message) {
     modalContent.appendChild(okButton);
     modalContainer.appendChild(modalContent);
     document.body.appendChild(modalContainer);
+}
+
+function havaDurumuButonEkle() {
+    // Weather functionality moved to weather-module.js
+    addWeatherButton();
+}
+
+function havaDurumuModalGoster() {
+    // Weather modal functionality moved to weather-module.js
+    showWeatherModal();
 }
