@@ -474,6 +474,18 @@ function sifreleStyleUygulaVeyaSil(uygula = true, smallElement) {
 }
 
 function secilenMetniCoz() {
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const selectedText = range.toString();
+
+        if (selectedText) {
+            // Process the selection to find and decrypt encrypted elements
+            processSelectionForDecryption(range);
+        }
+    }
+    
+    // Fallback to single element if no selection
     if (sifresiCozulecekSmallElement) {
         sifresiCozulecekSmallElement = sifreleStyleUygulaVeyaSil(false, sifresiCozulecekSmallElement);
         sifresiCozulecekSmallElement.innerText = sifresiCozulecekSmallElement.getAttribute('data-pureValue');
@@ -533,6 +545,53 @@ function processSelectionForEncryption(range) {
             textNode.parentNode.replaceChild(encryptedElement, textNode);
         }
     });
+}
+
+function processSelectionForDecryption(range) {
+    // Get all encrypted elements within the range
+    const fragment = range.cloneContents();
+    const encryptedElements = fragment.querySelectorAll('.sifrelenmisEleman');
+    
+    // If no encrypted elements found in the fragment, try to find them in the actual document
+    if (encryptedElements.length === 0) {
+        // Use TreeWalker to find encrypted elements within the range
+        const walker = document.createTreeWalker(
+            range.commonAncestorContainer,
+            NodeFilter.SHOW_ELEMENT,
+            {
+                acceptNode: function (node) {
+                    // Check if the element is within the range and has the encrypted class
+                    if (range.intersectsNode(node) && node.classList.contains('sifrelenmisEleman')) {
+                        return NodeFilter.FILTER_ACCEPT;
+                    }
+                    return NodeFilter.FILTER_REJECT;
+                }
+            }
+        );
+        
+        let node;
+        while (node = walker.nextNode()) {
+            // Decrypt each found element
+            node = sifreleStyleUygulaVeyaSil(false, node);
+            node.innerText = node.getAttribute('data-pureValue');
+            node.classList.remove('sifrelenmisEleman');
+        }
+    } else {
+        // Process elements found in the fragment
+        encryptedElements.forEach(element => {
+            // Find the actual element in the document
+            const pureValue = element.getAttribute('data-pureValue');
+            const actualElement = document.querySelector(`.sifrelenmisEleman[data-pureValue="${pureValue.replace(/"/g, '\\"')}"]`);
+            
+            if (actualElement) {
+                const decryptedElement = sifreleStyleUygulaVeyaSil(false, actualElement);
+                decryptedElement.innerText = decryptedElement.getAttribute('data-pureValue');
+                decryptedElement.classList.remove('sifrelenmisEleman');
+            }
+        });
+    }
+    
+    editor.setData(getEditorData());
 }
 
 function getTextNodesInRange(range) {
