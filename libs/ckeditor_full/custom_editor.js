@@ -267,7 +267,7 @@ setTimeout(() => {
     havaDurumuButonEkle();
     eventListelenerAyarla();
     //ayarlaFindAndReplace();
-    //denemeSimgeliIcon();
+    denemeSimgeliIcon();
 }, 100);
 
 function disableRightClickForToolbar() {
