@@ -1,4 +1,32 @@
-window.CkEditorBilgi = window.CkEditorBilgi || { disaridanEklenenIcerik: '', guncelIcerik: '' };
+window.CkEditorBilgi = window.CkEditorBilgi || { disaridanEklenenIcerik: '', disaridanEklenenIcerikBase64: '', guncelIcerik: '' };
+
+const BASE64_CHUNK_THRESHOLD = 256 * 1024; // 256KB – above this, decode in chunks to avoid UI freeze
+
+function base64ToUtf8(base64) {
+    if (!base64) return '';
+    const binary = atob(base64);
+    const len = binary.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+}
+
+function base64ToUtf8Async(base64) {
+    if (!base64) return Promise.resolve('');
+    const binary = atob(base64);
+    const len = binary.length;
+    if (len <= BASE64_CHUNK_THRESHOLD) return Promise.resolve(base64ToUtf8(base64));
+    const bytes = new Uint8Array(len);
+    const CHUNK = 65536; // 64KB per chunk
+    let offset = 0;
+    return new Promise(function step(resolve, reject) {
+        const end = Math.min(offset + CHUNK, len);
+        for (let i = offset; i < end; i++) bytes[i] = binary.charCodeAt(i);
+        offset = end;
+        if (offset < len) setTimeout(function () { step(resolve, reject); }, 0);
+        else resolve(new TextDecoder('utf-8').decode(bytes));
+    });
+}
 
 class MyUploadAdapter {
     constructor(loader) {
@@ -729,7 +757,15 @@ function guncelIcerigiDoldur() {
 
 function editoruDoldur() {
     wpfEventFirlat('editorStatus', 'busy');
-    editor.setData(window.CkEditorBilgi.disaridanEklenenIcerik);
+    if (window.CkEditorBilgi.disaridanEklenenIcerikBase64) {
+        var base64 = window.CkEditorBilgi.disaridanEklenenIcerikBase64;
+        window.CkEditorBilgi.disaridanEklenenIcerikBase64 = '';
+        base64ToUtf8Async(base64).then(function (content) {
+            editor.setData(content);
+        });
+    } else {
+        editor.setData(window.CkEditorBilgi.disaridanEklenenIcerik);
+    }
 }
 
 function wpfEventFirlat(action, detail) {
