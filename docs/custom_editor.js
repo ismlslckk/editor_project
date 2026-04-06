@@ -15,17 +15,18 @@ function base64ToUtf8Async(base64) {
     if (!base64) return Promise.resolve('');
     const binary = atob(base64);
     const len = binary.length;
-    if (len <= BASE64_CHUNK_THRESHOLD) return Promise.resolve(base64ToUtf8(base64));
-    const bytes = new Uint8Array(len);
-    const CHUNK = 65536; // 64KB per chunk
-    let offset = 0;
-    return new Promise(function step(resolve, reject) {
-        const end = Math.min(offset + CHUNK, len);
-        for (let i = offset; i < end; i++) bytes[i] = binary.charCodeAt(i);
-        offset = end;
-        if (offset < len) setTimeout(function () { step(resolve, reject); }, 0);
-        else resolve(new TextDecoder('utf-8').decode(bytes));
-    });
+    return Promise.resolve(base64ToUtf8(base64));
+    // if (len <= BASE64_CHUNK_THRESHOLD) return Promise.resolve(base64ToUtf8(base64));
+    // const bytes = new Uint8Array(len);
+    // const CHUNK = 65536; // 64KB per chunk
+    // let offset = 0;
+    // return new Promise(function step(resolve, reject) {
+    //     const end = Math.min(offset + CHUNK, len);
+    //     for (let i = offset; i < end; i++) bytes[i] = binary.charCodeAt(i);
+    //     offset = end;
+    //     if (offset < len) setTimeout(function () { step(resolve, reject); }, 0);
+    //     else resolve(new TextDecoder('utf-8').decode(bytes));
+    // });
 }
 
 class MyUploadAdapter {
